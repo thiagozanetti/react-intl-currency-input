@@ -4,8 +4,7 @@
   "description": "A React component for i18n currency input using the Intl API.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "babel src --out-dir dist",
-    "test": "ava"
+    "build": "babel src --out-dir dist"
   },
   "repository": {
     "type": "git",
@@ -33,14 +32,9 @@
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-react": "^6.23.0",
     "babel-preset-stage-0": "^6.22.0",
-    "big.js": "^3.1.3",
-    "react": "^15.4.2"
+    "big.js": "^3.1.3"
   },
-  "babel": {
-    "presets": [
-      "es2015",
-      "stage-0",
-      "react"
-    ]
+  "peerDependencies": {
+    "react": "^15.4.2"
   }
 }
