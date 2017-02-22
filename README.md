@@ -12,7 +12,7 @@ $ npm install react-intl-currency-input --save-dev
 
 ```js
 import React from "react"
-import IntCurrencyInput from "react-intl-currency-input"
+import IntlCurrencyInput from "react-intl-currency-input"
 
 const currencyConfig = {
   locale: "pt-BR",
@@ -37,7 +37,7 @@ const BrlCurrencyComponent = () => {
   };
   
   return(
-    <IntCurrencyInput currency="BRL" config=currencyConfig
+    <IntlCurrencyInput currency="BRL" config=currencyConfig
             onChange={handleChange} />
   );
 }
