@@ -107,7 +107,7 @@ IntlCurrencyInput.propTypes = {
   currency: React.PropTypes.string.isRequired,
   config: React.PropTypes.object.isRequired,
   autoFocus: React.PropTypes.bool,
-  autoSelect: ReactPropTypes.bool,
+  autoSelect: React.PropTypes.bool,
   onChange: React.PropTypes.func,
   onBlur: React.PropTypes.func,
   onFocus: React.PropTypes.func,
