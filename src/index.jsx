@@ -2,28 +2,42 @@ import React, { Component } from "react"
 
 import formatCurrency from "./format-currency"
 
+const defaultConfig = {
+  USD: {
+    locale: "en-US",
+    formats: {
+      number: {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      },
+    },
+  },
+};
+
 class IntlCurrencyInput extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      value: "0",
-      maskedValue: "",
+      maskedValue: "0",
     }
   }
 
   normalizeValue = str => {
-    return Number(str.replace(/[^0-9]/g, ""))
+    // strips everything that is not a number (positive or negative).
+    return Number(str.replace(/[^0-9-]/g, ""))
   }
 
   handleChange = event => {
     event.preventDefault();
 
+    // value must be divided by 100 to work with cents.
     const value = normalizeValue(event.target.value) / 100;
-    const maskedValue = formatCurrency(value);
+    const maskedValue = formatCurrency(value, this.props.config, this.props.currency);
 
     this.setState({
-      value,
       maskedValue,
     });
 
@@ -40,8 +54,13 @@ class IntlCurrencyInput extends Component {
 
 IntlCurrencyInput.propTypes = {
   currency: React.PropTypes.string.isRequired,
-  config: React.PropTypes.object,
+  config: React.PropTypes.object.isRequired,
   onChange: React.PropTypes.func,
-}
+};
+
+IntlCurrencyInput.defaultProps = {
+  currency: "USD",
+  config: defaultConfig,
+};
 
 export default IntlCurrencyInput;
