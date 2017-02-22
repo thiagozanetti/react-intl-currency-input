@@ -4,7 +4,7 @@
   "description": "A React component for i18n currency input using the Intl API.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "babel src --out-dir dist"
+    "build": "babel src --out-dir dist",
     "prepublish": "npm run build"
   },
   "repository": {
