@@ -15,17 +15,17 @@ import React from "react"
 import IntCurrencyInput from "react-intl-currency-input"
 
 const currencyConfig = {
-  BRL: {
-    locale: "pt-BR",
-    formats: {
-      number: {
+  locale: "pt-BR",
+  formats: {
+    number: {
+      BRL: {
         style: "currency",
         currency: "BRL",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 const BrlCurrencyComponent = () => {

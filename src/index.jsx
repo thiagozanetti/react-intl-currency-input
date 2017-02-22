@@ -3,10 +3,10 @@ import React, { Component } from "react"
 import formatCurrency from "./format-currency"
 
 const defaultConfig = {
-  USD: {
-    locale: "en-US",
-    formats: {
-      number: {
+  locale: "en-US",
+  formats: {
+    number: {
+      USD: {
         style: "currency",
         currency: "USD",
         minimumFractionDigits: 2,
@@ -21,8 +21,18 @@ class IntlCurrencyInput extends Component {
     super(props);
 
     this.state = {
-      maskedValue: "0",
+      maskedValue: "",
     }
+  }
+
+  componentDidMount() {
+    this.setState({
+      maskedValue: formatCurrency(0, this.props.config, this.props.currency),
+    });
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(nextProps === this.props && nextState === this.state);
   }
 
   normalizeValue = str => {
