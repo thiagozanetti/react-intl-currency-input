@@ -93,7 +93,7 @@ class IntlCurrencyInput extends Component {
   render() {
     return(
       <input value={this.state.maskedValue}
-        ref={input => this.handleInputRef}
+        ref={input => this.handleInputRef(input)}
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         onFocus={this.handleFocus}
