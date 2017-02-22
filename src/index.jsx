@@ -22,15 +22,18 @@ class IntlCurrencyInput extends Component {
     super(props);
 
     this.state = {
-      value: 0,
-      maskedValue: "",
+
     }
   }
 
-  componentDidMount() {
+  resetMaskedValue = () => {
     this.setState({
       maskedValue: formatCurrency(0, this.props.config, this.props.currency),
     });
+  }
+
+  componentDidMount() {
+    this.resetMaskedValue();
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -50,7 +53,6 @@ class IntlCurrencyInput extends Component {
     const maskedValue = formatCurrency(value, this.props.config, this.props.currency);
 
     this.setState({
-      value,
       maskedValue,
     });
 
@@ -60,6 +62,10 @@ class IntlCurrencyInput extends Component {
   };
 
   handleBlur = event => {
+    if (this.props.autoReset) {
+      this.resetMaskedValue();
+    }
+
     if (this.props.onBlur) {
       this.props.onBlur(event);
     }
@@ -111,6 +117,7 @@ IntlCurrencyInput.propTypes = {
   config: React.PropTypes.object.isRequired,
   autoFocus: React.PropTypes.bool,
   autoSelect: React.PropTypes.bool,
+  autoReset: React.PropTypes.bool,
   onChange: React.PropTypes.func,
   onBlur: React.PropTypes.func,
   onFocus: React.PropTypes.func,
@@ -123,6 +130,7 @@ IntlCurrencyInput.defaultProps = {
   config: defaultConfig,
   autoFocus: false,
   autoSelect: false,
+  autoReset: false,
 };
 
 export default IntlCurrencyInput;

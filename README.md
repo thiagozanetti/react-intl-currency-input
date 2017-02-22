@@ -54,6 +54,7 @@ export default BrlCurrencyComponent;
 |config|object|USD related configuration|Configuration object compliant with react-intl [intlShape](https://github.com/yahoo/react-intl/wiki/API#intlshape)|
 |autoFocus|boolean|false|Enables auto-focus when the component gets displayed|
 |autoSelect|boolean|false|Enables auto-select when the component gets displayed|
+|autoReset|boolean|false|Resets component's internal state when loses focus|
 |onChange|function|undefined|`(event, value, maskedValued) => {}`<br><br>Exposes the `Event` itself, the `value` with no mask and `maskedValue` for displaying purposes|
 |onFocus|function|undefined|`(event) => {}`<br><br>Called when the component gains focus|
 |onBlur|function|undefined|`(event) => {}`<br><br>Called when the component loses focus|
