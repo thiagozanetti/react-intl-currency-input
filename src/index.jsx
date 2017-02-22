@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import ReactDOM from "react-dom"
 
 import formatCurrency from "./format-currency"
 
@@ -43,7 +44,7 @@ class IntlCurrencyInput extends Component {
   handleChange = event => {
     event.preventDefault();
 
-    // value must be divided by 100 to work with cents.
+    // value must be divided by 100 to properly work with cents.
     const value = this.normalizeValue(event.target.value) / 100;
     const maskedValue = formatCurrency(value, this.props.config, this.props.currency);
 
@@ -74,9 +75,25 @@ class IntlCurrencyInput extends Component {
     }
   };
 
+  handleInputRef = input => {
+    const element = ReactDOM.findDOMNode(input);
+    const isActive = element === document.activeElement;
+
+    if (element && !isActive) {
+      if (this.props.autoFocus) {
+        element.focus();
+      }
+
+      if (this.props.autoSelect) {
+        element.select();
+      }
+    }
+  };
+
   render() {
     return(
       <input value={this.state.maskedValue}
+        ref={input => this.handleInputRef}
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         onFocus={this.handleFocus}
@@ -89,6 +106,8 @@ class IntlCurrencyInput extends Component {
 IntlCurrencyInput.propTypes = {
   currency: React.PropTypes.string.isRequired,
   config: React.PropTypes.object.isRequired,
+  autoFocus: React.PropTypes.bool,
+  autoSelect: ReactPropTypes.bool,
   onChange: React.PropTypes.func,
   onBlur: React.PropTypes.func,
   onFocus: React.PropTypes.func,
@@ -98,6 +117,8 @@ IntlCurrencyInput.propTypes = {
 IntlCurrencyInput.defaultProps = {
   currency: "USD",
   config: defaultConfig,
+  autoFocus: false,
+  autoSelect: false,
 };
 
 export default IntlCurrencyInput;
