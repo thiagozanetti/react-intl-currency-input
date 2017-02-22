@@ -1,6 +1,6 @@
 ## react-intl-currency-input
 
-A React component for i18n currency input using Intl API.
+A React component for i18n currency input using [Intl API](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Intl).
 
 ### Installation
 
@@ -31,11 +31,11 @@ const currencyConfig = {
 const BrlCurrencyComponent = () => {
   const handleChange = (event, value, maskedValue) => {
     event.preventDefault();
-
+    
     console.log(vaue); // value without mask (ex: 1234.56)
     console.log(maskedVaue); // masked value (ex: R$1234,56)
   };
-
+  
   return(
     <IntCurrencyInput currency="BRL" config=currencyConfig
             onChange={this.handleChange} />
