@@ -38,7 +38,7 @@ const BrlCurrencyComponent = () => {
   
   return(
     <IntCurrencyInput currency="BRL" config=currencyConfig
-            onChange={this.handleChange} />
+            onChange={handleChange} />
   );
 }
 
