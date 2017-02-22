@@ -22,6 +22,7 @@ class IntlCurrencyInput extends Component {
     super(props);
 
     this.state = {
+      value: 0,
       maskedValue: "",
     }
   }
@@ -49,6 +50,7 @@ class IntlCurrencyInput extends Component {
     const maskedValue = formatCurrency(value, this.props.config, this.props.currency);
 
     this.setState({
+      value,
       maskedValue,
     });
 
@@ -98,6 +100,7 @@ class IntlCurrencyInput extends Component {
         onBlur={this.handleBlur}
         onFocus={this.handleFocus}
         onKeyUp={this.handleKeyPress}
+        style={this.props.style}
      />
     );
   }
@@ -112,6 +115,7 @@ IntlCurrencyInput.propTypes = {
   onBlur: React.PropTypes.func,
   onFocus: React.PropTypes.func,
   onKeyPress: React.PropTypes.func,
+  style: React.PropTypes.object,
 };
 
 IntlCurrencyInput.defaultProps = {
