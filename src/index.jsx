@@ -45,9 +45,7 @@ class IntlCurrencyInput extends Component {
     return Number(str.replace(/[^0-9-]/g, ""))
   };
 
-  handleChange = event => {
-    event.preventDefault();
-
+  updateValues = (event) => {
     // value must be divided by 100 to properly work with cents.
     const value = this.normalizeValue(event.target.value) / 100;
     const maskedValue = formatCurrency(value, this.props.config, this.props.currency);
@@ -56,30 +54,42 @@ class IntlCurrencyInput extends Component {
       maskedValue,
     });
 
+    return [value, maskedValue];
+  }
+
+  handleChange = event => {
+    event.preventDefault();
+
+    const [value, maskedValue] = this.updateValues(event);
+
     if (this.props.onChange) {
       this.props.onChange(event, value, maskedValue);
     }
   };
 
   handleBlur = event => {
+    const [value, maskedValue] = this.updateValues(event);
+
     if (this.props.autoReset) {
       this.resetMaskedValue();
     }
 
     if (this.props.onBlur) {
-      this.props.onBlur(event);
+      this.props.onBlur(event, value, maskedValue);
     }
   };
 
   handleFocus = event => {
+    const [value, maskedValue] = this.updateValues(event);
+
     if (this.props.onFocus) {
-      this.props.onFocus(event);
+      this.props.onFocus(event, value, maskedValue);
     }
   };
 
   handleKeyPress = event => {
     if (this.props.onKeyPress) {
-      this.props.onKeyPress(event);
+      this.props.onKeyPress(event, event.key, event.keyCode);
     }
   };
 

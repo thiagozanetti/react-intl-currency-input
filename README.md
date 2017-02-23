@@ -56,8 +56,8 @@ export default BrlCurrencyComponent;
 |autoSelect|boolean|false|Enables auto-select when the component gets displayed|
 |autoReset|boolean|false|Resets component's internal state when loses focus|
 |onChange|function|undefined|`(event, value, maskedValued) => {}`<br><br>Exposes the `Event` itself, the `value` with no mask and `maskedValue` for displaying purposes|
-|onFocus|function|undefined|`(event) => {}`<br><br>Called when the component gains focus|
-|onBlur|function|undefined|`(event) => {}`<br><br>Called when the component loses focus|
-|onKeyPress|function|undefined|`(event) => {}`<br><br>Called when a `key` is pressed|
+|onFocus|function|undefined|`(event, value, maskedValued) => {`<br><br>Called when the component gains focus|
+|onBlur|function|undefined|`(event, value, maskedValued) => {`<br><br>Called when the component loses focus|
+|onKeyPress|function|undefined|`(event, key, keyCode) => {}`<br><br>Called when a `key` is pressed|
 
 All other undocumented properties available for any `React Component` should be available.
