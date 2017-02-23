@@ -32,8 +32,8 @@ const BrlCurrencyComponent = () => {
   const handleChange = (event, value, maskedValue) => {
     event.preventDefault();
     
-    console.log(vaue); // value without mask (ex: 1234.56)
-    console.log(maskedVaue); // masked value (ex: R$1234,56)
+    console.log(value); // value without mask (ex: 1234.56)
+    console.log(maskedValue); // masked value (ex: R$1234,56)
   };
   
   return(
