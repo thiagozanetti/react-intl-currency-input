@@ -22,7 +22,7 @@ class IntlCurrencyInput extends Component {
     super(props);
 
     this.state = {
-
+      maskedValue: "0",
     }
   }
 
@@ -45,7 +45,9 @@ class IntlCurrencyInput extends Component {
     return Number(str.replace(/[^0-9-]/g, ""))
   };
 
-  updateValues = (event) => {
+  updateValues = event => {
+    const _event = {...event};
+
     // value must be divided by 100 to properly work with cents.
     const value = this.normalizeValue(event.target.value) / 100;
     const maskedValue = formatCurrency(value, this.props.config, this.props.currency);
@@ -108,15 +110,31 @@ class IntlCurrencyInput extends Component {
     }
   };
 
+  allowedProps = () => {
+    const allowedProps = {...this.props};
+
+    delete allowedProps.currency;
+    delete allowedProps.config;
+    delete allowedProps.autoSelect;
+    delete allowedProps.autoFocus;
+    delete allowedProps.autoReset;
+    delete allowedProps.onChange;
+    delete allowedProps.onKeyPress;
+    delete allowedProps.onBlur;
+    delete allowedProps.onFocus;
+
+    return allowedProps;
+  }
+
   render() {
     return(
-      <input value={this.state.maskedValue}
+      <input {...this.allowedProps()}
+        value={this.state.maskedValue}
         ref={input => this.handleInputRef(input)}
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         onFocus={this.handleFocus}
         onKeyUp={this.handleKeyPress}
-        style={this.props.style}
      />
     );
   }
@@ -132,7 +150,6 @@ IntlCurrencyInput.propTypes = {
   onBlur: React.PropTypes.func,
   onFocus: React.PropTypes.func,
   onKeyPress: React.PropTypes.func,
-  style: React.PropTypes.object,
 };
 
 IntlCurrencyInput.defaultProps = {
