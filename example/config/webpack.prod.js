@@ -20,7 +20,7 @@ function ensureSlash(path, needsSlash) {
   }
 }
 
-const homepagePath = require(paths.appPackageJson).homepage;
+const homepagePath = ".";
 const homepagePathname = homepagePath ? url.parse(homepagePath).pathname : '/';
 const publicPath = ensureSlash(homepagePathname, true);
 const publicUrl = ensureSlash(homepagePathname, false);
@@ -64,6 +64,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         include: [
           paths.appSrc,
+          path.resolve(__dirname, paths.componentSrc),
           path.resolve(__dirname, path.join(paths.appNodeModules, 'react-icons')),
           path.resolve(__dirname, path.join(paths.appNodeModules, 'react-icons/md'))
         ],
