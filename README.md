@@ -31,13 +31,13 @@ const currencyConfig = {
 const BrlCurrencyComponent = () => {
   const handleChange = (event, value, maskedValue) => {
     event.preventDefault();
-    
+
     console.log(value); // value without mask (ex: 1234.56)
     console.log(maskedValue); // masked value (ex: R$1234,56)
   };
-  
+
   return(
-    <IntlCurrencyInput currency="BRL" config=currencyConfig
+    <IntlCurrencyInput currency="BRL" config={currencyConfig}
             onChange={handleChange} />
   );
 }
