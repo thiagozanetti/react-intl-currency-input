@@ -9,7 +9,7 @@ const filesize = require('filesize');
 const gzipSize = require('gzip-size').sync;
 const rimrafSync = require('rimraf').sync;
 const webpack = require('webpack');
-const config = require('../config/webpack.config.prod');
+const config = require('../config/webpack.prod');
 const paths = require('../config/paths');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const recursive = require('recursive-readdir');
@@ -111,6 +111,14 @@ function build(previousSizeMap) {
       printErrors('Failed to compile.', stats.compilation.errors);
       process.exit(1);
     }
+
+    printFileSizes(stats, previousSizeMap);
+
+    console.log();
+    console.log();
+    console.log();
+    console.log(chalk.green("Done!"));
+    console.log();
   });
 }
 
