@@ -82,6 +82,10 @@ class IntlCurrencyInput extends Component {
   };
 
   handleFocus = event => {
+    if (this.props.autoSelect) {
+      this.input.select();
+    }
+
     const [value, maskedValue] = this.updateValues(event);
 
     if (this.props.onFocus) {
@@ -103,11 +107,9 @@ class IntlCurrencyInput extends Component {
       if (this.props.autoFocus) {
         element.focus();
       }
-
-      if (this.props.autoSelect) {
-        element.select();
-      }
     }
+
+    return element;
   };
 
   allowedProps = () => {
@@ -130,7 +132,7 @@ class IntlCurrencyInput extends Component {
     return(
       <input {...this.allowedProps()}
         value={this.state.maskedValue}
-        ref={input => this.handleInputRef(input)}
+        ref={input => this.input = this.handleInputRef(input)}
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         onFocus={this.handleFocus}
