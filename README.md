@@ -53,7 +53,10 @@ To run the example:
 
 ```sh
 $ npm run example
+$ npm run serve
 ```
+
+And a new browser window will open at [http://localhost:8080](http://localhost:8080)
 
 
 ### Properties
