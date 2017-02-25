@@ -45,6 +45,16 @@ const BrlCurrencyComponent = () => {
 export default BrlCurrencyComponent;
 
 ```
+### Example
+
+![example](https://cloud.githubusercontent.com/assets/333482/23334967/c7eff3fe-fb80-11e6-870f-be21fe8935ea.gif)
+
+To run the example:
+
+```sh
+$ npm run example
+```
+
 
 ### Properties
 
