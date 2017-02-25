@@ -1,7 +1,15 @@
 import React, { Component } from "react"
 import ReactDom from "react-dom"
 
-import IntCurrencyInput from "../src"
+import SyntaxHighlighter, { registerLanguage } from "react-syntax-highlighter/dist/light"
+import javascript from "highlight.js/lib/languages/javascript"
+import gist from "react-syntax-highlighter/dist/styles/github-gist"
+
+registerLanguage("javascript", javascript);
+
+import IntlCurrencyInput from "../../src"
+
+import "./index.css"
 
 const currencyConfig = {
   locale: "pt-BR",
@@ -16,16 +24,26 @@ const currencyConfig = {
     },
   },
 };
-class BrlCurrencyComponent extends Component {
+
+// a little hack to make highlighting work.
+const stripKeyQuotes = strObj => {
+  const regex = /"([\w]+)":/g;
+  const subst = `\$1:`;
+
+  return strObj.replace(regex, subst);
+};
+
+class BrlCurrencyInput extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       value: 0,
-      maskedValue: "0",
+      maskedValue: "R$0,00",
     };
   }
-  const handleChange = (event, value, maskedValue) => {
+
+  handleChange = (event, value, maskedValue) => {
     event.preventDefault();
 
     console.log(value); // value without mask (ex: 1234.56)
@@ -42,12 +60,12 @@ class BrlCurrencyComponent extends Component {
     return(
       <div>
         <IntlCurrencyInput currency="BRL" config={currencyConfig}
-                onChange={handleChange}
+                onChange={this.handleChange}
                 autoFocus={true}
                 autoSelect={true}
         />
-        <p>value: {this.state.value}</p>
-        <p>maskedValue: {this.state.maskedValue}</p>
+        <p>value: <strong>{this.state.value}</strong></p>
+        <p>maskedValue: <strong>{this.state.maskedValue}</strong></p>
       </div>
     );
   }
@@ -55,10 +73,12 @@ class BrlCurrencyComponent extends Component {
 
 ReactDom.render(
   <div>
-    <h3>
+    <h1>
       react-intl-currency-input example
-    </h3>
-    <label>Just input some amount too see the returned values</label>
+    </h1>
+    <p>Using this configuration:</p>
+    <SyntaxHighlighter language="javascript" style={gist}>{stripKeyQuotes(JSON.stringify(currencyConfig, null, 2))}</SyntaxHighlighter>
+    <p>Just input some amount to see the returned values:</p>
     <BrlCurrencyInput />
-  </div>
-);
+  </div>,
+  document.getElementById("root"));
