@@ -52,8 +52,8 @@ export default BrlCurrencyComponent;
 To run the example:
 
 ```sh
-$ npm run example
-$ npm run serve
+$ npm run example:build
+$ npm run example:serve
 ```
 
 And a new browser window will open at [http://localhost:8080](http://localhost:8080)
