@@ -26,14 +26,15 @@ class IntlCurrencyInput extends Component {
     }
   }
 
-  resetMaskedValue = () => {
+  setMaskedValue = (value=0) => {
     this.setState({
-      maskedValue: formatCurrency(0, this.props.config, this.props.currency),
+      maskedValue: formatCurrency(value, this.props.config, this.props.currency),
     });
   }
 
   componentDidMount() {
-    this.resetMaskedValue();
+    const value = this.props.defaultValue || 0;
+    this.setMaskedValue(value);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -73,7 +74,7 @@ class IntlCurrencyInput extends Component {
     const [value, maskedValue] = this.updateValues(event);
 
     if (this.props.autoReset) {
-      this.resetMaskedValue();
+      this.setMaskedValue();
     }
 
     if (this.props.onBlur) {
@@ -83,7 +84,7 @@ class IntlCurrencyInput extends Component {
 
   handleFocus = event => {
     if (this.props.autoSelect) {
-      this.input.select();
+      event.target.select();
     }
 
     const [value, maskedValue] = this.updateValues(event);
@@ -112,6 +113,10 @@ class IntlCurrencyInput extends Component {
     return element;
   };
 
+  handleValue = () => {
+    return this.state.maskedValue;
+  };
+
   allowedProps = () => {
     const allowedProps = {...this.props};
 
@@ -131,7 +136,7 @@ class IntlCurrencyInput extends Component {
   render() {
     return(
       <input {...this.allowedProps()}
-        value={this.state.maskedValue}
+        value={this.handleValue()}
         ref={input => this.input = this.handleInputRef(input)}
         onChange={this.handleChange}
         onBlur={this.handleBlur}
