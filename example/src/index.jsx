@@ -34,12 +34,14 @@ const stripKeyQuotes = strObj => {
 };
 
 class BrlCurrencyInput extends Component {
+  defaultValue = 1234.56;
+
   constructor(props) {
     super(props);
 
     this.state = {
-      value: 0,
-      maskedValue: "R$0,00",
+      value: this.defaultValue,
+      maskedValue: "R$1234,56",
     };
   }
 
@@ -60,6 +62,7 @@ class BrlCurrencyInput extends Component {
     return(
       <div>
         <IntlCurrencyInput currency="BRL" config={currencyConfig}
+                defaultValue={this.defaultValue}
                 onChange={this.handleChange}
                 autoFocus={true}
                 autoSelect={true}
