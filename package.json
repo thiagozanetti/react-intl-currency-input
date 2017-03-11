@@ -1,13 +1,13 @@
 {
   "name": "react-intl-currency-input",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A React component for i18n currency input using the Intl API.",
   "main": "dist/index.js",
   "scripts": {
     "build": "babel src --out-dir dist",
     "prepublish": "npm run build",
-    "example": "node example/scripts/build.js",
-    "serve": "node example/server.js"
+    "example:build": "node example/scripts/build.js",
+    "example:serve": "node example/server.js"
   },
   "repository": {
     "type": "git",
