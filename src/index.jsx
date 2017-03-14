@@ -150,7 +150,7 @@ class IntlCurrencyInput extends Component {
 IntlCurrencyInput.propTypes = {
   currency: React.PropTypes.string.isRequired,
   config: React.PropTypes.object.isRequired,
-  defaultValue: Reac.PropTypes.number,
+  defaultValue: React.PropTypes.number,
   autoFocus: React.PropTypes.bool,
   autoSelect: React.PropTypes.bool,
   autoReset: React.PropTypes.bool,
