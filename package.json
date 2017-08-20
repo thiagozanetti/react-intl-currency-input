@@ -1,6 +1,6 @@
 {
   "name": "react-intl-currency-input",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "A React component for i18n currency input using the Intl API.",
   "main": "dist/index.js",
   "scripts": {
