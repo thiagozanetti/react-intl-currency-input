@@ -37,6 +37,13 @@ class IntlCurrencyInput extends Component {
     this.setMaskedValue(value);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.currency !== this.props.currency) {
+      const [value, maskedValue] = this.calculateValues(this.state.maskedValue, nextProps.config, nextProps.currency);
+      this.setState({maskedValue: maskedValue});
+    }
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     return !(nextProps === this.props && nextState === this.state);
   }
@@ -46,19 +53,24 @@ class IntlCurrencyInput extends Component {
     return Number(str.replace(/[^0-9-]/g, ""))
   };
 
+  calculateValues = (inputFieldValue, config, currency) => {
+    // value must be divided by 100 to properly work with cents.
+    const value = this.normalizeValue(inputFieldValue) / 100;
+    const maskedValue = formatCurrency(value, config, currency);
+
+    return [value, maskedValue];
+  };
+
   updateValues = event => {
     const _event = {...event};
-
-    // value must be divided by 100 to properly work with cents.
-    const value = this.normalizeValue(event.target.value) / 100;
-    const maskedValue = formatCurrency(value, this.props.config, this.props.currency);
+    const [value, maskedValue] = this.calculateValues(event.target.value, this.props.config, this.props.currency);
 
     this.setState({
       maskedValue,
     });
 
     return [value, maskedValue];
-  }
+  };
 
   handleChange = event => {
     event.preventDefault();
