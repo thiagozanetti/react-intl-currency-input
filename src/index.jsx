@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import ReactDOM from "react-dom"
-
+import PropTypes from "prop-types"
+ 
 import formatCurrency from "./format-currency"
 
 const defaultConfig = {
@@ -160,16 +161,16 @@ class IntlCurrencyInput extends Component {
 };
 
 IntlCurrencyInput.propTypes = {
-  currency: React.PropTypes.string.isRequired,
-  config: React.PropTypes.object.isRequired,
-  defaultValue: React.PropTypes.number,
-  autoFocus: React.PropTypes.bool,
-  autoSelect: React.PropTypes.bool,
-  autoReset: React.PropTypes.bool,
-  onChange: React.PropTypes.func,
-  onBlur: React.PropTypes.func,
-  onFocus: React.PropTypes.func,
-  onKeyPress: React.PropTypes.func,
+  currency: PropTypes.string.isRequired,
+  config: PropTypes.object.isRequired,
+  defaultValue: PropTypes.number,
+  autoFocus: PropTypes.bool,
+  autoSelect: PropTypes.bool,
+  autoReset: PropTypes.bool,
+  onChange: PropTypes.func,
+  onBlur: PropTypes.func,
+  onFocus: PropTypes.func,
+  onKeyPress: PropTypes.func,
 };
 
 IntlCurrencyInput.defaultProps = {
