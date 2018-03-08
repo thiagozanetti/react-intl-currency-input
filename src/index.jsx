@@ -66,12 +66,15 @@ class IntlCurrencyInput extends Component {
 
   updateValues(event) {
     const [value, maskedValue] = this.calculateValues(event.target.value, this.props.config, this.props.currency)
+    if (!this.props.max || value < this.props.max) {
+      this.setState({
+        maskedValue,
+      })
 
-    this.setState({
-      maskedValue,
-    })
-
-    return [value, maskedValue]
+      return [value, maskedValue]
+    } else {
+      return [this.normalizeValue(this.state.maskedValue), this.state.maskedValue]
+    }
   }
 
   handleChange(event) {
@@ -79,7 +82,7 @@ class IntlCurrencyInput extends Component {
 
     const [value, maskedValue] = this.updateValues(event)
 
-    if (this.props.onChange && value && maskedValue) {
+    if (this.props.onChange && maskedValue) {
       this.props.onChange(event, value, maskedValue)
     }
   }

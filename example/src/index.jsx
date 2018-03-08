@@ -67,9 +67,11 @@ class BrlCurrencyInput extends Component {
           onChange={ (ev, value, maskedValue) => this.handleChange(ev, value, maskedValue) }
           autoFocus={true}
           autoSelect={true}
+          max={999999999.99}
         />
         <p>value: <strong>{this.state.value}</strong></p>
         <p>maskedValue: <strong>{this.state.maskedValue}</strong></p>
+        <p>max value: <strong>{"999.999.999,99"}</strong></p>
       </div>
     );
   }
