@@ -137,6 +137,7 @@ class IntlCurrencyInput extends Component {
   allowedProps() {
     const allowedProps = { ...this.props }
 
+		delete allowedProps.defaultValue
     delete allowedProps.currency
     delete allowedProps.config
     delete allowedProps.autoSelect
