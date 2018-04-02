@@ -66,12 +66,15 @@ class IntlCurrencyInput extends Component {
 
   updateValues(event) {
     const [value, maskedValue] = this.calculateValues(event.target.value, this.props.config, this.props.currency)
+    if (!this.props.max || value <= this.props.max) {
+      this.setState({
+        maskedValue,
+      })
 
-    this.setState({
-      maskedValue,
-    })
-
-    return [value, maskedValue]
+      return [value, maskedValue]
+    } else {
+      return [this.normalizeValue(this.state.maskedValue)/100, this.state.maskedValue]
+    }
   }
 
   handleChange(event) {
@@ -79,7 +82,7 @@ class IntlCurrencyInput extends Component {
 
     const [value, maskedValue] = this.updateValues(event)
 
-    if (this.props.onChange && value && maskedValue) {
+    if (this.props.onChange && maskedValue) {
       this.props.onChange(event, value, maskedValue)
     }
   }
@@ -134,6 +137,7 @@ class IntlCurrencyInput extends Component {
   allowedProps() {
     const allowedProps = { ...this.props }
 
+		delete allowedProps.defaultValue
     delete allowedProps.currency
     delete allowedProps.config
     delete allowedProps.autoSelect
@@ -172,6 +176,7 @@ IntlCurrencyInput.propTypes = {
   onBlur: func,
   onFocus: func,
   onKeyPress: func,
+  max: number,
 }
 
 IntlCurrencyInput.defaultProps = {

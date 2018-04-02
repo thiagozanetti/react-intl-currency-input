@@ -71,5 +71,6 @@ And a new browser window will open at [http://localhost:8080](http://localhost:8
 | onFocus | function | undefined | `(event, value, maskedValued) => {`<br><br>Called when the component gains focus |
 | onBlur | function | undefined| `(event, value, maskedValued) => {`<br><br>Called when the component loses focus |
 | onKeyPress | function| undefined | `(event, key, keyCode) => {}`<br><br>Called when a `key` is pressed |
+| max | number| undefined | maximum value for the input. Input does not change if the value is greater than max |
 
 All other undocumented properties available for any `React Component` should be available.

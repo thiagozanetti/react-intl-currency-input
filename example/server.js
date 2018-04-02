@@ -13,7 +13,7 @@ app.listen({
   port: process.env.PORT || 8080
 }, function() {
   const host = this.address();
-  const address = `http://${host.address}:${host.port}`
+  const address = `http://${host.address}:${host.port}/index.html`
 
   opn(address);
   
