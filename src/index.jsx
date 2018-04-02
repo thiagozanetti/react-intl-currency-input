@@ -176,6 +176,7 @@ IntlCurrencyInput.propTypes = {
   onBlur: func,
   onFocus: func,
   onKeyPress: func,
+  max: number,
 }
 
 IntlCurrencyInput.defaultProps = {
