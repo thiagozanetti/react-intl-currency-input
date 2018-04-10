@@ -152,8 +152,10 @@ class IntlCurrencyInput extends Component {
   }
 
   render() {
+    const { inputComponent } = this.props;
+    const InputComponent = inputComponent;
     return (
-      <input {...this.allowedProps()}
+      <InputComponent {...this.allowedProps()}
         value={this.handleValue()}
         ref={input => this.input = this.handleInputRef(input)}
         onChange={ ev => this.handleChange(ev) }
@@ -180,6 +182,7 @@ IntlCurrencyInput.propTypes = {
 }
 
 IntlCurrencyInput.defaultProps = {
+  inputComponent: "input",
   currency: "USD",
   config: defaultConfig,
   autoFocus: false,
