@@ -36,7 +36,7 @@ class IntlCurrencyInput extends Component {
   }
 
   componentDidMount() {
-    const value = this.props.defaultValue || 0
+    const value =  this.props.value || this.props.defaultValue || this.props.defaultValue || 0
     this.setMaskedValue(value)
   }
 
