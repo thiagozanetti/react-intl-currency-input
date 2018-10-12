@@ -41,8 +41,12 @@ class IntlCurrencyInput extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.currency !== this.props.currency) {
-      const [, maskedValue] = this.calculateValues(this.state.maskedValue, nextProps.config, nextProps.currency)
+    if (
+	nextProps.currency !== this.props.currency || 
+	nextProps.value !== this.props.value
+    ) {
+      const value = nextProps.value !== this.props.value ? nextProps.value : this.state.maskedValue
+      const [, maskedValue] = this.calculateValues(value, nextProps.config, nextProps.currency)
       this.setState({ maskedValue: maskedValue })
     }
   }
@@ -169,6 +173,7 @@ IntlCurrencyInput.propTypes = {
   currency: string.isRequired,
   config: object.isRequired,
   defaultValue: number,
+  value: number,
   autoFocus: bool,
   autoSelect: bool,
   autoReset: bool,
