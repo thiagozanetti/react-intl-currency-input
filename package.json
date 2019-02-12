@@ -72,7 +72,7 @@
     "react-syntax-highlighter": "^6.1.2",
     "recursive-readdir": "^2.2.1",
     "rimraf": "^2.6.2",
-    "strip-ansi": "^4.0.0",
+    "strip-ansi": "^5.0.0",
     "style-loader": "^0.19.1",
     "url-loader": "^0.6.2",
     "webpack": "<2.x.x",
