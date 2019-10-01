@@ -52,7 +52,7 @@
     "express": "^4.16.2",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^1.1.6",
-    "filesize": "^3.5.11",
+    "filesize": "^5.0.1",
     "fs-extra": "^5.0.0",
     "gzip-size": "^4.1.0",
     "gzippo": "^0.2.0",
