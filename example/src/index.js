@@ -34,10 +34,11 @@ const stripKeyQuotes = strObj => {
 };
 
 const defaultValue = 1234.56;
+const maxValue = 999999999.99;
 
 const BrlCurrencyInput = () => {
   const [value, setValue] = useState(defaultValue);
-  const [maskedValue, setMaskedValue] = useState('R$1234,56');
+  const [maskedValue, setMaskedValue] = useState('R$1.234,56');
 
   const handleChange = (event, value, maskedValue) => {
     event.preventDefault();
@@ -56,11 +57,11 @@ const BrlCurrencyInput = () => {
         onChange={handleChange}
         autoFocus={true}
         autoSelect={true}
-        max={999999999.99}
+        max={maxValue}
       />
       <p>Value: <strong>{value}</strong></p>
       <p>Masked Value: <strong>{maskedValue}</strong></p>
-      <p>Max Value: <strong>{'999.999.999,99'}</strong></p>
+      <p>Max Value: <strong>{maxValue}</strong></p>
     </div>
   );
 }
