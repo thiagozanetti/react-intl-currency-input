@@ -58,9 +58,9 @@ const BrlCurrencyInput = () => {
         autoSelect={true}
         max={999999999.99}
       />
-      <p>value: <strong>{value}</strong></p>
-      <p>maskedValue: <strong>{maskedValue}</strong></p>
-      <p>max value: <strong>{'999.999.999,99'}</strong></p>
+      <p>Value: <strong>{value}</strong></p>
+      <p>Masked Value: <strong>{maskedValue}</strong></p>
+      <p>Max Value: <strong>{'999.999.999,99'}</strong></p>
     </div>
   );
 }
