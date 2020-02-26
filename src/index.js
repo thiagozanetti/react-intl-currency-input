@@ -31,7 +31,7 @@ const IntlCurrencyInput = ({
   onBlur,
   onFocus,
   onKeyPress,
-  ...props
+  ...otherProps
 }) => {
   const inputRef = useCallback(node => {
     const isActive = node === document.activeElement;
@@ -43,21 +43,19 @@ const IntlCurrencyInput = ({
 
   const [maskedValue, setMaskedValue] = useState('0');
 
-  const formatValue = useCallback(value => setMaskedValue(formatCurrency(value, config, currency)));
-  
   // strips everything that is not a number (positive or negative)
-  const normalizeValue = str => Number(str.replace(/[^0-9-]/g, ''));
+  const normalizeValue = number => Number(number.toString().replace(/[^0-9-]/g, ''));
 
-  const calculateValues = useCallback((inputFieldValue, config, currency) => {
+  const calculateValues = (inputFieldValue) => {
     // value must be divided by 100 to properly work with cents.
     const value = normalizeValue(inputFieldValue) / 100;
     const maskedValue = formatCurrency(value, config, currency);
 
     return [value, maskedValue];
-  });
+  };
 
   const updateValues = (value) => {
-    const [calculatedValue, calculatedMaskedValue] = calculateValues(value, config, currency);
+    const [calculatedValue, calculatedMaskedValue] = calculateValues(value);
     
     if (!max || calculatedValue <= max) {
       setMaskedValue(calculatedMaskedValue);
@@ -106,19 +104,16 @@ const IntlCurrencyInput = ({
 
   useEffect(() => {
     const currentValue = value || defaultValue || 0;
-    formatValue(currentValue);
-  }, [value, defaultValue, formatValue]);
-
-  useEffect(() => {
-    const [, maskedValue] = calculateValues(value, config, currency);
+    const [, maskedValue] = calculateValues(currentValue, config, currency);
 
     setMaskedValue(maskedValue);
-  }, [currency, value, config, calculateValues]);
+  }, [currency, value, defaultValue, config]);
 
   return (
     <InputComponent
-      {...props}
+      {...otherProps}
       ref={inputRef}
+      value={maskedValue}
       onChange={handleChange}
       onBlur={handleBlur}
       onFocus={handleFocus}
@@ -144,8 +139,9 @@ IntlCurrencyInput.propTypes = {
 };
 
 IntlCurrencyInput.defaultProps = {
-  component: <input/>,
+  component: 'input',
   currency: 'USD',
+  value: 0,
   config: defaultConfig,
   autoFocus: false,
   autoSelect: false,
