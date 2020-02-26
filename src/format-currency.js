@@ -1,4 +1,4 @@
-import Big from "big.js"
+import Big from 'big.js';
 
 export default function formatCurrency(value, localeConfig, currencyName) {
   const numberConfig = localeConfig.formats.number[currencyName];
