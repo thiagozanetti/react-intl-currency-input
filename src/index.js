@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { string, func, number, bool, shape, node } from 'prop-types';
 
 import formatCurrency from './format-currency';
@@ -44,7 +44,7 @@ const IntlCurrencyInput = ({
   const [maskedValue, setMaskedValue] = useState('0');
 
   // to prevent a malformed config object
-  const safeConfig = () => ({ ...defaultConfig, ...config });
+  const safeConfig = useMemo(() => () => ({ ...defaultConfig, ...config }), [defaultConfig, config]);
 
   const normalizeValue = number => {
     const { formats: { number: { [currency]: { maximumFractionDigits: numDigits } } } } = safeConfig();
