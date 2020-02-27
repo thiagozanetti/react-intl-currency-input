@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { string, func, number, bool, shape, node } from 'prop-types';
 
 import formatCurrency from './format-currency';
@@ -43,13 +43,20 @@ const IntlCurrencyInput = ({
 
   const [maskedValue, setMaskedValue] = useState('0');
 
-  // strips everything that is not a number (positive or negative)
-  const normalizeValue = number => Number(number.toString().replace(/[^0-9-]/g, ''));
+  // to prevent a malformed config object
+  const safeConfig = useMemo(() => () => ({ ...defaultConfig, ...config }), [defaultConfig, config]);
+
+  const normalizeValue = number => {
+    const { formats: { number: { [currency]: { maximumFractionDigits: numDigits } } } } = safeConfig();
+    
+    // strips everything that is not a number (positive or negative)
+    // then divide it by 10 power the maximum fraction digits.
+    return Number(number.toString().replace(/[^0-9-]/g, '')) / 10 ** numDigits;
+  };
 
   const calculateValues = (inputFieldValue) => {
-    // value must be divided by 100 to properly work with cents.
-    const value = normalizeValue(inputFieldValue) / 100;
-    const maskedValue = formatCurrency(value, config, currency);
+    const value = normalizeValue(inputFieldValue);
+    const maskedValue = formatCurrency(value, safeConfig(), currency);
 
     return [value, maskedValue];
   };
@@ -62,7 +69,7 @@ const IntlCurrencyInput = ({
 
       return [calculatedValue, calculatedMaskedValue];
     } else {
-      return [normalizeValue(maskedValue)/100, maskedValue];
+      return [normalizeValue(maskedValue), maskedValue];
     }
   };
 
@@ -104,7 +111,7 @@ const IntlCurrencyInput = ({
 
   useEffect(() => {
     const currentValue = value || defaultValue || 0;
-    const [, maskedValue] = calculateValues(currentValue, config, currency);
+    const [, maskedValue] = calculateValues(currentValue);
 
     setMaskedValue(maskedValue);
   }, [currency, value, defaultValue, config]);
