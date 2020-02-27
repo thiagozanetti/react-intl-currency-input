@@ -50,9 +50,8 @@ const IntlCurrencyInput = ({
     const { formats: { number: { [currency]: { maximumFractionDigits: numDigits } } } } = safeConfig();
     
     // strips everything that is not a number (positive or negative)
-    // then divide it by 10 times the maximum fraction digits.
-    // fallback to 1 to prevent division by zero.
-    return Number(number.toString().replace(/[^0-9-]/g, '')) / Math.max(1, 10 * numDigits);
+    // then divide it by 10 power the maximum fraction digits.
+    return Number(number.toString().replace(/[^0-9-]/g, '')) / 10 ** numDigits;
   };
 
   const calculateValues = (inputFieldValue) => {
