@@ -48,10 +48,14 @@ const IntlCurrencyInput = ({
 
   const normalizeValue = number => {
     const { formats: { number: { [currency]: { maximumFractionDigits: numDigits } } } } = safeConfig();
+
+    
+    // all input numbers must be a float point (for the cents portion). This is a fallback in case of integer ones.
+    const safeNumber = Number.isInteger(number) ? Number(number) * 100 : number;
     
     // strips everything that is not a number (positive or negative)
     // then divide it by 10 power the maximum fraction digits.
-    return Number(number.toString().replace(/[^0-9-]/g, '')) / 10 ** numDigits;
+    return Number(safeNumber.toString().replace(/[^0-9-]/g, '')) / 10 ** numDigits;
   };
 
   const calculateValues = (inputFieldValue) => {
