@@ -62,12 +62,12 @@ const IntlCurrencyInput = ({
       if (newNum % 1 !== 0) newNum = newNum.toFixed(numDigits);
       safeNumber = newNum;
     } else {
-      safeNumber = Number.isInteger(number) ? Number(number) * Math.pow(10, numDigits) : number.toFixed(numDigits);
+      safeNumber = Number.isInteger(number) ? Number(number) * (10 ** numDigits) : number.toFixed(numDigits);
     }
     
     // strips everything that is not a number (positive or negative)
     // then divide it by 10 power the maximum fraction digits.
-    return clean(safeNumber) / 10 ** numDigits;
+    return clean(safeNumber) / (10 ** numDigits);
   };
   
   const calculateValues = (inputFieldValue) => {
