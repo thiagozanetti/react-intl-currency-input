@@ -58,9 +58,8 @@ const IntlCurrencyInput = ({
     
     // all input numbers must be a float point (for the cents portion). This is a fallback in case of integer ones.
     if (typeof number === 'string') {
-      let newNum = clean(number);
-      if (newNum % 1 !== 0) newNum = newNum.toFixed(numDigits);
-      safeNumber = newNum;
+      let safeNumber = clean(number);
+      if (safeNumber % 1 !== 0) safeNumber = safeNumber.toFixed(numDigits);
     } else {
       safeNumber = Number.isInteger(number) ? Number(number) * (10 ** numDigits) : number.toFixed(numDigits);
     }
@@ -69,7 +68,7 @@ const IntlCurrencyInput = ({
     // then divide it by 10 power the maximum fraction digits.
     return clean(safeNumber) / (10 ** numDigits);
   };
-  
+
   const calculateValues = (inputFieldValue) => {
     const value = normalizeValue(inputFieldValue);
     const maskedValue = formatCurrency(value, safeConfig(), currency);
