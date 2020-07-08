@@ -58,7 +58,7 @@ const IntlCurrencyInput = ({
     
     // all input numbers must be a float point (for the cents portion). This is a fallback in case of integer ones.
     if (typeof number === 'string') {
-      let safeNumber = clean(number);
+      safeNumber = clean(number);
       if (safeNumber % 1 !== 0) safeNumber = safeNumber.toFixed(numDigits);
     } else {
       safeNumber = Number.isInteger(number) ? Number(number) * (10 ** numDigits) : number.toFixed(numDigits);
