@@ -46,18 +46,30 @@ const IntlCurrencyInput = ({
   // to prevent a malformed config object
   const safeConfig = useMemo(() => () => ({ ...defaultConfig, ...config }), [defaultConfig, config]);
 
+  const clean = (number) => {
+    if (typeof number === 'number') return number;
+    return Number(number.toString().replace(/[^0-9-]/g, ''));
+  }
+
   const normalizeValue = number => {
     const { formats: { number: { [currency]: { maximumFractionDigits: numDigits } } } } = safeConfig();
+    let safeNumber = number;
 
     
     // all input numbers must be a float point (for the cents portion). This is a fallback in case of integer ones.
-    const safeNumber = Number.isInteger(number) ? Number(number) * 100 : number;
+    if (typeof number === 'string') {
+      let newNum = clean(number);
+      if (newNum % 1 !== 0) newNum = newNum.toFixed(numDigits);
+      safeNumber = newNum;
+    } else {
+      safeNumber = Number.isInteger(number) ? Number(number) * Math.pow(10, numDigits) : number.toFixed(numDigits);
+    }
     
     // strips everything that is not a number (positive or negative)
     // then divide it by 10 power the maximum fraction digits.
-    return Number(safeNumber.toString().replace(/[^0-9-]/g, '')) / 10 ** numDigits;
+    return clean(safeNumber) / 10 ** numDigits;
   };
-
+  
   const calculateValues = (inputFieldValue) => {
     const value = normalizeValue(inputFieldValue);
     const maskedValue = formatCurrency(value, safeConfig(), currency);
