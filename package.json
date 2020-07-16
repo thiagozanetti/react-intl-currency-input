@@ -3,9 +3,6 @@
   "version": "0.2.4",
   "description": "A React component for i18n currency input using the Intl API.",
   "main": "dist/index.js",
-  "publishConfig": { 
-    "registry": "https://npm.pkg.github.com/"
-  },
   "scripts": {
     "build": "babel src --out-dir dist",
     "prepublish": "npm run build",
