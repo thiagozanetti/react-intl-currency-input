@@ -44,29 +44,48 @@ const IntlCurrencyInput = ({
   const [maskedValue, setMaskedValue] = useState('0');
 
   // to prevent a malformed config object
-  const safeConfig = useMemo(() => () => ({ ...defaultConfig, ...config }), [defaultConfig, config]);
+  const safeConfig = useMemo(() => () => {
+    const { formats: { number: { [currency]: { maximumFractionDigits } } } } = config;
+
+    const finalConfig = {
+      ...defaultConfig,
+      ...config,
+    };
+
+    // at the moment this prevents problems when converting numbers
+    // with zeroes in-between, otherwise 205 would convert to 25.
+    finalConfig.formats.number[currency].minimumFractionDigits = maximumFractionDigits;
+
+    return finalConfig;
+  }, [defaultConfig, config]);
 
   const clean = (number) => {
-    if (typeof number === 'number') return number;
-    return Number(number.toString().replace(/[^0-9-]/g, ''));
-  }
-
-  const normalizeValue = number => {
-    const { formats: { number: { [currency]: { maximumFractionDigits: numDigits } } } } = safeConfig();
-    let safeNumber = number;
-
-    
-    // all input numbers must be a float point (for the cents portion). This is a fallback in case of integer ones.
-    if (typeof number === 'string') {
-      safeNumber = clean(number);
-      if (safeNumber % 1 !== 0) safeNumber = safeNumber.toFixed(numDigits);
-    } else {
-      safeNumber = Number.isInteger(number) ? Number(number) * (10 ** numDigits) : number.toFixed(numDigits);
+    if (typeof number === 'number') {
+      return number;
     }
     
     // strips everything that is not a number (positive or negative)
-    // then divide it by 10 power the maximum fraction digits.
-    return clean(safeNumber) / (10 ** numDigits);
+    return Number(number.toString().replace(/[^0-9-]/g, ''));
+  };
+
+  const normalizeValue = number => {
+    const { formats: { number: { [currency]: { maximumFractionDigits } } } } = safeConfig();
+    let safeNumber = number;
+
+    if (typeof number === 'string') {
+      safeNumber = clean(number);
+
+      if (safeNumber % 1 !== 0) {
+        safeNumber = safeNumber.toFixed(maximumFractionDigits);
+      }
+
+    } else {
+      // all input numbers must be a float point (for the cents portion). This is a fallback in case of integer ones.
+      safeNumber = Number.isInteger(number) ? Number(number) * (10 ** maximumFractionDigits) : number.toFixed(maximumFractionDigits);
+    }
+    
+    // divide it by 10 power the maximum fraction digits.
+    return clean(safeNumber) / (10 ** maximumFractionDigits);
   };
 
   const calculateValues = (inputFieldValue) => {
