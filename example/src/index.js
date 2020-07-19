@@ -33,7 +33,7 @@ const stripKeyQuotes = strObj => {
   return strObj.replace(regex, subst);
 };
 
-const defaultValue = 10.00;
+const defaultValue = 2.5;
 const maxValue = 999999999.99;
 
 const BrlCurrencyInput = () => {
