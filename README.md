@@ -73,3 +73,7 @@ And a new browser window will open at [http://localhost:3000](http://localhost:3
 | max | number| undefined | maximum value for the input. Input does not change if the value is greater than max |
 
 All other undocumented properties available for any `React Component` should be available.
+
+### TO-DO
+- [ ] Add unit tests
+- [ ] Add a Storybook for examples and UI tests
