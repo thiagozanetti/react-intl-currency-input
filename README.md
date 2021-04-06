@@ -61,6 +61,7 @@ And a new browser window will open at [http://localhost:3000](http://localhost:3
 
 | Name | Type | Default | Description |
 | :---: | :---: | :---: | :--- |
+| defaultValue | number | 0 | Sets the default / initial value to be used by the component on the first load |
 | currency | string | USD | Sets the [currency code](http://www.xe.com/iso4217.php) |
 | config | object | USD related configuration | Configuration object compliant with react-intl [intlShape](https://github.com/yahoo/react-intl/wiki/API#intlshape) |
 | autoFocus | boolean | false | Enables auto-focus when the component gets displayed |
@@ -70,9 +71,9 @@ And a new browser window will open at [http://localhost:3000](http://localhost:3
 | onFocus | function | undefined | `(event, value, maskedValued) => {`<br><br>Called when the component gains focus |
 | onBlur | function | undefined| `(event, value, maskedValued) => {`<br><br>Called when the component loses focus |
 | onKeyPress | function| undefined | `(event, key, keyCode) => {}`<br><br>Called when a `key` is pressed |
-| max | number| undefined | maximum value for the input. Input does not change if the value is greater than max |
+| max | number| undefined | Maximum value for the input. Input does not change if the value is greater than max |
 
-All other undocumented properties available for any `React Component` should be available.
+All the other undocumented properties available for any `React Component` should also be available.
 
 ### TO-DO
 - [ ] Add unit tests
