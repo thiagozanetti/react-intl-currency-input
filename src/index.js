@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { string, func, number, bool, shape, node } from 'prop-types';
+import { string, func, number, bool, shape, node, oneOfType, instanceOf,  } from 'prop-types';
 
 import formatCurrency from './format-currency';
 
@@ -31,9 +31,10 @@ const IntlCurrencyInput = ({
   onBlur,
   onFocus,
   onKeyPress,
+  inputRef,
   ...otherProps
 }) => {
-  const inputRef = useCallback(node => {
+  const localInputRef = useCallback(node => {
     const isActive = node === document.activeElement;
 
     if (node && autoFocus && !isActive) {
@@ -153,7 +154,7 @@ const IntlCurrencyInput = ({
   return (
     <InputComponent
       {...otherProps}
-      ref={inputRef}
+      ref={inputRef ? inputRef : localInputRef}
       value={maskedValue}
       onChange={handleChange}
       onBlur={handleBlur}
@@ -177,6 +178,10 @@ IntlCurrencyInput.propTypes = {
   onBlur: func.isRequired,
   onFocus: func.isRequired,
   onKeyPress: func.isRequired,
+  inputRef: oneOfType([
+    func,
+    shape({ current: instanceOf(Element) })
+  ])
 };
 
 IntlCurrencyInput.defaultProps = {
