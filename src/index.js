@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { string, func, number, bool, shape, node, oneOfType, instanceOf,  } from 'prop-types';
+import { any, string, func, number, bool, shape, node, oneOfType, instanceOf,  } from 'prop-types';
 
 import formatCurrency from './format-currency';
 
@@ -180,7 +180,7 @@ IntlCurrencyInput.propTypes = {
   onKeyPress: func.isRequired,
   inputRef: oneOfType([
     func,
-    shape({ current: instanceOf(Element) })
+    shape({ current: (typeof Element === 'undefined' ? any : instanceOf(Element)) })
   ])
 };
 
