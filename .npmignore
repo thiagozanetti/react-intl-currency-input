@@ -1,7 +1,8 @@
-.babelrc
 .npmignore
 .gitignore
-.eslintrc.js
+.npmrc-github
+.nvmrc
+tsconfig.json
+.parcel-cache/
 node_modules/
 src/
-example/
