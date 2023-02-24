@@ -43,5 +43,9 @@
   "bugs": {
     "url": "https://github.com/thiagozanetti/react-intl-currency-input/issues"
   },
-  "homepage": "https://github.com/thiagozanetti/react-intl-currency-input#readme"
+  "homepage": "https://github.com/thiagozanetti/react-intl-currency-input#readme",
+  "engines": {
+    "node": "16",
+    "npm": "9"
+  }
 }
