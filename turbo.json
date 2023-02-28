@@ -1,0 +1,14 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "//#build:lib": {
+      "dependsOn": []
+    },
+    "//#build:app": {
+      "dependsOn": ["//#build:lib"]
+    },
+    "//#build:all": {
+      "dependsOn": ["//#build:lib", "//#build:app"]
+    }
+  }
+}

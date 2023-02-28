@@ -3,12 +3,14 @@
   "version": "0.3.0",
   "description": "A React component for i18n currency input using the Intl API.",
   "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/lib/index.cjs",
+  "module": "./dist/lib/index.js",
+  "types": "./dist/lib/index.d.ts",
   "scripts": {
     "start": "vite",
-    "build": "tsup src/index.tsx --format cjs,esm --dts"
+    "build:all": "npm run build:app && npm run build:lib",
+    "build:app": "tsup app/index.tsx --out-dir dist/app --format cjs,esm --dts",
+    "build:lib": "tsup lib/index.tsx --out-dir dist/lib --format cjs,esm --dts"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -47,5 +49,9 @@
   "engines": {
     "node": "16",
     "npm": "9"
-  }
+  },
+  "workspaces": [
+    "app/*",
+    "lib/*"
+  ]
 }
