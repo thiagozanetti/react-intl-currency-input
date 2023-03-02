@@ -61,33 +61,32 @@ const IntlCurrencyInput = ({
     return finalConfig;
   }, [defaultConfig, config]);
 
-  const clean = (number: string | number) => {
-    if (typeof number === 'number') {
-      return number;
+  const clean = (value: string | number): number => {
+    if (typeof value === 'number') {
+      return value;
     }
 
     // strips everything that is not a number (positive or negative)
-    return Number(number.toString().replace(/[^0-9-]/g, ''));
+    return Number(value.replace(/[^0-9-]/g, ''));
   };
 
-  const normalizeValue = (number: string | number) => {
+  const normalizeValue = (value: string | number): number => {
     const { formats: { number: { [currency]: { maximumFractionDigits } } } } = safeConfig();
-    let safeNumber = number;
+    let safeValue = value;
 
-    if (typeof number === 'string') {
-      safeNumber = clean(number);
+    if (typeof value === 'string') {
+      safeValue = clean(value);
 
-      if (safeNumber % 1 !== 0) {
-        safeNumber = safeNumber.toFixed(maximumFractionDigits!);
+      if (safeValue % 1 !== 0) {
+        safeValue = safeValue.toFixed(maximumFractionDigits!);
       }
-
     } else {
       // all input numbers must be a float point (for the cents portion). This is a fallback in case of integer ones.
-      safeNumber = Number.isInteger(number) ? Number(number) * (10 ** maximumFractionDigits!) : number.toFixed(maximumFractionDigits!);
+      safeValue = Number.isInteger(safeValue) ? Number(safeValue) * (10 ** maximumFractionDigits!) : Number(safeValue).toFixed(maximumFractionDigits!);
     }
 
     // divide it by 10 power the maximum fraction digits.
-    return clean(safeNumber) / (10 ** maximumFractionDigits!);
+    return clean(safeValue) / (10 ** maximumFractionDigits!);
   };
 
   const calculateValues = (inputFieldValue: number): [number, string] => {
