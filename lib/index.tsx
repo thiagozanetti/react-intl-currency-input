@@ -196,6 +196,7 @@ IntlCurrencyInput.defaultProps = {
   onBlur: () => {},
   onFocus: () => {},
   onKeyPress: () => {},
+  inputRef: () => {},
 };
 
 export default IntlCurrencyInput;
