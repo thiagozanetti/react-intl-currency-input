@@ -7,7 +7,7 @@
   "module": "./dist/lib/index.js",
   "types": "./dist/lib/index.d.ts",
   "scripts": {
-    "start:app": "vite app --port 3000 --host 0.0.0.0",
+    "start:app": "vite app --port 3000 --host 0.0.0.0 --open",
     "build:all": "npm run build:lib && npm run build:app",
     "build:app": "rm -rf dist/app && tsup app/index.tsx --out-dir dist/app",
     "build:lib": "rm -rf dist/lib && tsup lib/index.tsx --out-dir dist/lib --format cjs,esm --dts"
@@ -18,9 +18,11 @@
     "tsup": "^6.6.3"
   },
   "devDependencies": {
+    "@types/big.js": "^6.1.6",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^3.1.0",
+    "big.js": "^6.2.1",
     "eslint-config-react-app": "^7.0.1",
     "typescript": "^4.9.5",
     "vite": "^4.1.4"
