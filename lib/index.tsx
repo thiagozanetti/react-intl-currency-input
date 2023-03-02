@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { string, func, number, bool, shape, node, oneOfType, instanceOf } from 'prop-types';
 
 import formatCurrency from './format-currency';
