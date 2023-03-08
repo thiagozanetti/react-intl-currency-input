@@ -1,12 +1,35 @@
 {
   "name": "react-intl-currency-input",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "description": "A React component for i18n currency input using the Intl API.",
-  "main": "dist/index.js",
+  "type": "module",
+  "main": "./dist/lib/index.cjs",
+  "module": "./dist/lib/index.js",
+  "types": "./dist/lib/index.d.ts",
   "scripts": {
-    "build": "babel src --out-dir dist",
-    "prepublish": "npm run build",
-    "example:start": "npm run build && cd example && npm start"
+    "start:app": "vite app --port 3000 --host 0.0.0.0 --open",
+    "lint": "tsc",
+    "preview:app": "vite preview app --outDir $PWD/dist/app --port 3000 --host 0.0.0.0 --open",
+    "build:all": "npm run build:lib && npm run build:app",
+    "build:app": "rm -rf dist/app && vite build app --outDir $PWD/dist/app --minify",
+    "build:lib": "rm -rf dist/lib && tsup lib/index.tsx --out-dir dist/lib --format cjs,esm --dts"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-syntax-highlighter": "^15.5.0",
+    "tsup": "^6.6.3"
+  },
+  "devDependencies": {
+    "@types/big.js": "^6.1.6",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/react-syntax-highlighter": "^15.5.6",
+    "@vitejs/plugin-react": "^3.1.0",
+    "big.js": "^6.2.1",
+    "eslint-config-react-app": "^7.0.1",
+    "typescript": "^4.9.5",
+    "vite": "^4.1.4"
   },
   "repository": {
     "type": "git",
@@ -14,13 +37,14 @@
   },
   "keywords": [
     "react",
-    "react 17",
+    "react 18",
     "react-hooks",
-    "es6",
+    "esnext",
     "intl",
     "currency",
     "component",
-    "input"
+    "input",
+    "vite"
   ],
   "author": "Thiago Zanetti <thiago.project@gmail.com>",
   "license": "MIT",
@@ -28,15 +52,12 @@
     "url": "https://github.com/thiagozanetti/react-intl-currency-input/issues"
   },
   "homepage": "https://github.com/thiagozanetti/react-intl-currency-input#readme",
-  "devDependencies": {
-    "@babel/cli": "^7.12.1",
-    "@babel/core": "^7.12.3",
-    "@babel/preset-env": "^7.12.1",
-    "@babel/preset-react": "^7.12.5",
-    "big.js": "^6.0.2",
-    "eslint": "^7.13.0",
-    "eslint-plugin-react": "^7.21.5",
-    "prop-types": "^15.7.2",
-    "react": "^17.0.1"
-  }
+  "engines": {
+    "node": "16",
+    "npm": "9"
+  },
+  "workspaces": [
+    "app/*",
+    "lib/*"
+  ]
 }
