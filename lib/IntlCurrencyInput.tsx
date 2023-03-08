@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { string, func, number, bool, shape, node, oneOfType, instanceOf } from 'prop-types';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { any, bool, func, instanceOf, node, number, oneOfType, shape, string } from 'prop-types';
 
 import formatCurrency from './format-currency';
 import { IntlCurrencyInputProps, IntlFormatterConfig } from './types';
@@ -67,7 +67,8 @@ const IntlCurrencyInput = ({
     }
 
     // strips everything that is not a number (positive or negative)
-    return Number(value.replace(/[^0-9-]/g, ''));
+    // also turns negative zeros (-0) into unsigned/positive ones (0)
+    return Number(value.replace(/[^0-9-]/g, '')) || 0;
   };
 
   const normalizeValue = (value: string | number): number => {
@@ -110,6 +111,8 @@ const IntlCurrencyInput = ({
 
   const handleChange = (event: { preventDefault: () => void; target: { value: number; }; }) => {
     event.preventDefault();
+
+    console.log('Target Value ====>', event.target.value);
 
     const [value, maskedValue] = updateValues(event.target.value);
 
@@ -164,6 +167,8 @@ const IntlCurrencyInput = ({
   );
 };
 
+const checkCurrentPropType = () => Element ? instanceOf(Element) :  any;
+
 IntlCurrencyInput.propTypes = {
   defaultValue: number,
   value: number,
@@ -180,7 +185,7 @@ IntlCurrencyInput.propTypes = {
   onKeyPress: func.isRequired,
   inputRef: oneOfType([
     func,
-    shape({ current: instanceOf(Element) })
+    shape({ current: checkCurrentPropType() })
   ])
 };
 
