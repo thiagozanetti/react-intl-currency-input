@@ -1,34 +1,58 @@
 # This workflow will run tests using node and then publish a package to NPM when a release is created
 # For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
 name: Publish to NPM
+
 on:
   release:
     types: [created]
+
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: 16
-      - run: npm i -g turbo
+          node-version: 18
       - run: npm ci
-      - run: turbo run lint
-      - run: turbo run build:lib
+      - run: npx turbo run lint
+      - run: npx turbo run build:lib
+
+      - name: Save lib artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: lib
+          path: dist/lib
+
   publish-npm:
+
     needs: build
+
     runs-on: ubuntu-latest
+
+    environment: Production
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           registry-url: https://registry.npmjs.org/
-      - run: npm i -g turbo
-      - run: npm ci
-      - run: turbo run lint
-      - run: turbo run build:lib
-      - run: npm publish
+
+      - name: Download previously built lib artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: lib
+
+      - name: Publish npm package
+        run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
