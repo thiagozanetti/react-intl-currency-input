@@ -1,6 +1,7 @@
 .github/
 .turbo/
 .vscode/
+dist/app/
 app/
 node_modules/
 lib/

@@ -9,8 +9,9 @@
   "scripts": {
     "start:app": "vite app --port 3000 --host 0.0.0.0 --open",
     "lint": "tsc",
+    "preview:app": "vite preview app --outDir $PWD/dist/app --port 3000 --host 0.0.0.0 --open",
     "build:all": "npm run build:lib && npm run build:app",
-    "build:app": "rm -rf dist/app && tsup app/index.tsx --out-dir dist/app",
+    "build:app": "rm -rf dist/app && vite build app --outDir $PWD/dist/app --minify",
     "build:lib": "rm -rf dist/lib && tsup lib/index.tsx --out-dir dist/lib --format cjs,esm --dts"
   },
   "dependencies": {
