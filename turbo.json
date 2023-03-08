@@ -4,6 +4,9 @@
     "//#start:app": {
       "dependsOn": []
     },
+    "//#lint": {
+      "dependsOn": []
+    },
     "//#build:lib": {
       "dependsOn": []
     },
