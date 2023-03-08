@@ -54,6 +54,9 @@ Temporary Items
 # turbo repos
 .turbo
 
+# vercel
+.vercel/
+
 # Logs
 logs
 *.log
