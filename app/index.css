@@ -10,18 +10,16 @@ body {
   color: #D3D7CF;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11pt;
-  overflow: hidden;
 }
 
 main {
   display: flex;
-  align-items: center;
   justify-content: center;
+  height: 100dvh;
 }
 
 section {
   background-color: #242829;
   padding: 10px 50px;
-  width: max-content;
-  height: 100dvh;
+  min-height: 33rem;
 }
