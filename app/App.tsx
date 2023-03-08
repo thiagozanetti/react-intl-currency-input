@@ -26,21 +26,21 @@ const currencyConfig: IntlFormatterConfig = {
 
 const defaultValue = 0.0;
 const maxValue = 999999999.99;
-const regex: RegExp = /"([\w]+)":/g;
-const subst: string = '$1:';
+const regex = /"([\w]+)":/g;
+const subst = '$1:';
 
 function BrlCurrencyInput() {
   const [value, setValue] = useState(defaultValue);
   const [maskedValue, setMaskedValue] = useState('R$0,00');
 
-  const handleChange = (event: ChangeEvent, value: number, maskedValue: string) => {
+  const handleChange = (event: ChangeEvent, currentValue: number, currentMaskedValue: string) => {
     event.preventDefault();
 
-    console.log(value); // value without mask (ex: 1234.56)
-    console.log(maskedValue); // masked value (ex: R$1234,56)
+    console.log(currentValue); // value without mask (ex: 1234.56)
+    console.log(currentMaskedValue); // masked value (ex: R$1234,56)
 
-    setValue(value);
-    setMaskedValue(maskedValue);
+    setValue(currentValue);
+    setMaskedValue(currentMaskedValue);
   };
 
   return (
