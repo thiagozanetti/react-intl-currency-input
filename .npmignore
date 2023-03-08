@@ -2,14 +2,14 @@
 .turbo/
 .vscode/
 .vercel/
-dist/app/
+dist/
 app/
 node_modules/
 lib/
 .gitignore
 .npmignore
 .npmrc-github
-.nvmrc
+.node-version
 tsconfig.json
 tsconfig.node.json
 turbo.json
