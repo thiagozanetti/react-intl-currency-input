@@ -6,6 +6,8 @@ dist/
 app/
 node_modules/
 lib/
+.eslintignore
+.eslintrc.cjs
 .gitignore
 .npmignore
 .npmrc-github
