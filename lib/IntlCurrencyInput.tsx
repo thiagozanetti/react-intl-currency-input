@@ -1,8 +1,11 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { string, func, number, bool, shape, node, oneOfType, instanceOf } from 'prop-types';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { any, bool, func, instanceOf, node, number, oneOfType, shape, string } from 'prop-types';
 
 import formatCurrency from './format-currency';
 import { IntlCurrencyInputProps, IntlFormatterConfig } from './types';
+
+const MINIMUM_FRACTION_DIGITS = 2;
+const MAXIMUM_FRACTION_DIGITS = 2;
 
 const defaultConfig: IntlFormatterConfig = {
   locale: 'en-US',
@@ -11,8 +14,8 @@ const defaultConfig: IntlFormatterConfig = {
       USD: {
         style: 'currency',
         currency: 'USD',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
+        maximumFractionDigits: MAXIMUM_FRACTION_DIGITS,
       },
     },
   },
@@ -35,19 +38,13 @@ const IntlCurrencyInput = ({
   inputRef,
   ...otherProps
 }: IntlCurrencyInputProps) => {
-  const localInputRef = useCallback((node: any) => {
-    const isActive = node === document.activeElement;
-
-    if (node && autoFocus && !isActive) {
-      node.focus();
-    }
-  }, [autoFocus]);
+  const localInputRef = useRef(null);
 
   const [maskedValue, setMaskedValue] = useState('0');
 
   // to prevent a malformed config object
   const safeConfig = useMemo(() => () => {
-    const { formats: { number: { [currency]: { maximumFractionDigits } } } } = config;
+    const { formats: { number: { [currency]: { maximumFractionDigits = MAXIMUM_FRACTION_DIGITS } } } } = config;
 
     const finalConfig = {
       ...defaultConfig,
@@ -61,43 +58,44 @@ const IntlCurrencyInput = ({
     return finalConfig;
   }, [defaultConfig, config]);
 
-  const clean = (value: string | number): number => {
-    if (typeof value === 'number') {
-      return value;
+  const clean = (entry: string | number): number => {
+    if (typeof entry === 'number') {
+      return entry;
     }
 
     // strips everything that is not a number (positive or negative)
-    return Number(value.replace(/[^0-9-]/g, ''));
+    // also turns negative zeros (-0) into unsigned/positive ones (0)
+    return Number(entry.replace(/[^0-9-]/g, '')) || 0;
   };
 
-  const normalizeValue = (value: string | number): number => {
-    const { formats: { number: { [currency]: { maximumFractionDigits } } } } = safeConfig();
-    let safeValue = value;
+  const normalizeValue = (entry: string | number): number => {
+    const { formats: { number: { [currency]: { maximumFractionDigits = MAXIMUM_FRACTION_DIGITS } } } } = safeConfig();
+    let safeValue = entry;
 
-    if (typeof value === 'string') {
-      safeValue = clean(value);
+    if (typeof entry === 'string') {
+      safeValue = clean(entry);
 
       if (safeValue % 1 !== 0) {
-        safeValue = safeValue.toFixed(maximumFractionDigits!);
+        safeValue = safeValue.toFixed(maximumFractionDigits);
       }
     } else {
       // all input numbers must be a float point (for the cents portion). This is a fallback in case of integer ones.
-      safeValue = Number.isInteger(safeValue) ? Number(safeValue) * (10 ** maximumFractionDigits!) : Number(safeValue).toFixed(maximumFractionDigits!);
+      safeValue = Number.isInteger(safeValue) ? Number(safeValue) * (10 ** maximumFractionDigits) : Number(safeValue).toFixed(maximumFractionDigits);
     }
 
     // divide it by 10 power the maximum fraction digits.
-    return clean(safeValue) / (10 ** maximumFractionDigits!);
+    return clean(safeValue) / (10 ** maximumFractionDigits);
   };
 
   const calculateValues = (inputFieldValue: number): [number, string] => {
-    const value = normalizeValue(inputFieldValue);
-    const maskedValue = formatCurrency(value, safeConfig(), currency);
+    const localValue = normalizeValue(inputFieldValue);
+    const localMaskedValue = formatCurrency(localValue, safeConfig(), currency);
 
-    return [value, maskedValue];
+    return [localValue, localMaskedValue];
   };
 
-  const updateValues = (value: number) => {
-    const [calculatedValue, calculatedMaskedValue] = calculateValues(value);
+  const updateValues = (entry: number) => {
+    const [calculatedValue, calculatedMaskedValue] = calculateValues(entry);
 
     if (!max || calculatedValue <= max) {
       setMaskedValue(calculatedMaskedValue);
@@ -111,34 +109,34 @@ const IntlCurrencyInput = ({
   const handleChange = (event: { preventDefault: () => void; target: { value: number; }; }) => {
     event.preventDefault();
 
-    const [value, maskedValue] = updateValues(event.target.value);
+    const [localValue, localMaskedValue] = updateValues(event.target.value);
 
-    if (maskedValue) {
-      onChange(event, value, maskedValue);
+    if (localMaskedValue) {
+      onChange(event, localValue, localMaskedValue);
     }
   };
 
   const handleBlur = (event: { target: { value: number; }; }) => {
-    const [value, maskedValue] = updateValues(event.target.value);
+    const [localValue, localMaskedValue] = updateValues(event.target.value);
 
     if (autoReset) {
       calculateValues(0);
     }
 
-    if (maskedValue) {
-      onBlur(event, value, maskedValue);
+    if (localMaskedValue) {
+      onBlur(event, localValue, localMaskedValue);
     }
   };
 
   const handleFocus = (event: { target: { select: () => void; value: number; }; }) => {
     if (autoSelect) {
-      event.target.select();
+      (localInputRef.current as any).select();
     }
 
-    const [value, maskedValue] = updateValues(event.target.value);
+    const [localValue, localMaskedValue] = updateValues(event.target.value);
 
-    if (maskedValue) {
-      onFocus(event, value, maskedValue);
+    if (localMaskedValue) {
+      onFocus(event, localValue, localMaskedValue);
     }
   };
 
@@ -146,10 +144,14 @@ const IntlCurrencyInput = ({
 
   useEffect(() => {
     const currentValue = value || defaultValue || 0;
-    const [, maskedValue] = calculateValues(currentValue);
+    const [, localMaskedValue] = calculateValues(currentValue);
 
-    setMaskedValue(maskedValue);
-  }, [currency, value, defaultValue, config]);
+    setMaskedValue(localMaskedValue);
+
+    if (autoFocus && localInputRef.current) {
+      (localInputRef.current as any).focus();
+    }
+  }, [autoFocus, autoSelect, currency, value, defaultValue, config]);
 
   return (
     <InputComponent
@@ -163,6 +165,8 @@ const IntlCurrencyInput = ({
     />
   );
 };
+
+const checkCurrentPropType = () => Element ? instanceOf(Element) : any;
 
 IntlCurrencyInput.propTypes = {
   defaultValue: number,
@@ -180,7 +184,7 @@ IntlCurrencyInput.propTypes = {
   onKeyPress: func.isRequired,
   inputRef: oneOfType([
     func,
-    shape({ current: instanceOf(Element) })
+    shape({ current: checkCurrentPropType() })
   ])
 };
 
@@ -196,7 +200,7 @@ IntlCurrencyInput.defaultProps = {
   onBlur: () => {},
   onFocus: () => {},
   onKeyPress: () => {},
-  inputRef: () => {},
+  inputRef: null,
 };
 
 export default IntlCurrencyInput;
