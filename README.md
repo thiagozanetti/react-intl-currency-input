@@ -47,12 +47,12 @@ export default BrlCurrencyComponent;
 ```
 ### Example
 
-![example](https://cloud.githubusercontent.com/assets/333482/23334967/c7eff3fe-fb80-11e6-870f-be21fe8935ea.gif)
+![example](https://user-images.githubusercontent.com/333482/228024696-844101c3-3e4d-419e-8e69-cf649245789c.png)
 
 To run the example:
 
 ```sh
-$ npm run example:start
+$ npx turbo run start:app
 ```
 
 And a new browser window will open at [http://localhost:3000](http://localhost:3000)
@@ -77,4 +77,3 @@ All the other undocumented properties available for any `React Component` should
 
 ### TO-DO
 - [ ] Add unit tests
-- [ ] Add a Storybook for examples and UI tests
