@@ -28,5 +28,6 @@ jobs:
         cache: 'npm'
     - run: npm i -g turbo
     - run: npm ci
+    - run: npm test
     - run: turbo run lint
     - run: turbo run build:all
