@@ -54,8 +54,8 @@ function BrlCurrencyInput() {
         autoFocus={true}
         autoSelect={true}
       />
-      <p>Value: <strong>{value}</strong></p>
-      <p>Masked Value: <strong>{maskedValue}</strong></p>
+      <p>Value: <strong id='currentValue'>{value}</strong></p>
+      <p>Masked Value: <strong id='maskedValue'>{maskedValue}</strong></p>
       <p>Max Value: <strong>{maxValue}</strong></p>
     </>
   );
