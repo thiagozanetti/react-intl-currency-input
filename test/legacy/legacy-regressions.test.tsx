@@ -73,6 +73,25 @@ describe('legacy regression fixes', () => {
     expect(inputRef.current).toHaveFocus();
   });
 
+  it('applies autoFocus through the legacy inputRef callback', () => {
+    let input: HTMLInputElement | null = null;
+    const inputRef = (element: HTMLInputElement | null) => {
+      input = element;
+    };
+
+    render(
+      <IntlCurrencyInput
+        currency="USD"
+        config={usdConfig}
+        inputRef={inputRef}
+        autoFocus
+      />,
+    );
+
+    expect(input).toBeInstanceOf(HTMLInputElement);
+    expect(input).toHaveFocus();
+  });
+
   it('does not mutate the caller config while applying legacy fraction padding', () => {
     const config: IntlFormatterConfig = {
       locale: 'en-US',
