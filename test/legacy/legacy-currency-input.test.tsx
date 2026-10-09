@@ -62,6 +62,7 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
 
     expect(input).toHaveValue('$1,234.56');
     expect(onChange).toHaveBeenCalledWith(expect.anything(), 1234.56, '$1,234.56');
+    expect(onChange.mock.calls[0][0].target.value).toBe('$1,234.56');
   });
 
   it('preserves embedded zeroes in a string input', () => {
@@ -84,6 +85,21 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
 
     fireEvent.change(input, { target: { value: '-0' } });
     expect(input).toHaveValue('$0.00');
+  });
+
+  it('reports zero edits through the legacy callback, including repeated zero edits', () => {
+    const onChange = vi.fn();
+    render(<IntlCurrencyInput currency="USD" config={usdConfig} onChange={onChange} />);
+    const input = screen.getByRole('textbox');
+
+    fireEvent.change(input, { target: { value: '0' } });
+    fireEvent.change(input, { target: { value: '0' } });
+
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange.mock.calls.map(([, value, display]) => [value, display])).toEqual([
+      [0, '$0.00'],
+      [0, '$0.00'],
+    ]);
   });
 
   it('does not call the legacy callback while only formatting props change', () => {
@@ -135,7 +151,7 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
     const input = screen.getByRole('textbox');
 
     expect(input).toHaveFocus();
-    expect(input.selectionStart).toBe(0);
+    expect(input.selectionStart).toBe(input.value.length);
     expect(input.selectionEnd).toBe(input.value.length);
   });
 
