@@ -114,7 +114,7 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 
-  it('keeps the previous display but still invokes onChange with the previous value above max', () => {
+  it('keeps the previous display and suppresses onChange above max', () => {
     const onChange = vi.fn();
     render(<IntlCurrencyInput currency="USD" config={usdConfig} max={10} onChange={onChange} />);
     const input = screen.getByRole('textbox');
@@ -122,26 +122,26 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
     fireEvent.change(input, { target: { value: '1001' } });
 
     expect(input).toHaveValue('$0.00');
-    expect(onChange).toHaveBeenCalledWith(expect.anything(), 0, '$0.00');
+    expect(onChange).not.toHaveBeenCalled();
   });
 
-  it('allows a value above max when max is zero because the legacy guard is truthy-only', () => {
+  it('rejects a value above a zero max', () => {
     render(<IntlCurrencyInput currency="USD" config={usdConfig} max={0} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.change(input, { target: { value: '100' } });
 
-    expect(input).toHaveValue('$1.00');
+    expect(input).toHaveValue('$0.00');
   });
 
-  it('uses the current value prop when it is truthy and otherwise falls back to defaultValue', () => {
+  it('uses the current value prop, including zero, over defaultValue', () => {
     const { rerender } = render(
       <IntlCurrencyInput currency="USD" config={usdConfig} value={12.34} defaultValue={56.78} />,
     );
     expect(screen.getByRole('textbox')).toHaveValue('$12.34');
 
     rerender(<IntlCurrencyInput currency="USD" config={usdConfig} value={0} defaultValue={56.78} />);
-    expect(screen.getByRole('textbox')).toHaveValue('$56.78');
+    expect(screen.getByRole('textbox')).toHaveValue('$0.00');
   });
 });
 
@@ -199,13 +199,13 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
     expect(input.selectionEnd).toBe(input.value.length);
   });
 
-  it('does not visibly reset on blur even when autoReset is enabled', () => {
+  it('resets on blur when autoReset is enabled', () => {
     render(<IntlCurrencyInput currency="USD" config={usdConfig} defaultValue={12.34} autoReset />);
     const input = screen.getByRole('textbox');
 
     fireEvent.blur(input);
 
-    expect(input).toHaveValue('$12.34');
+    expect(input).toHaveValue('$0.00');
   });
 
   it('reflects rapid controlled prop updates in the latest formatted display', () => {

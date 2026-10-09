@@ -12,7 +12,7 @@ export type IntlFormatterConfig = {
 export type IntlCurrencyInputProps = React.PropsWithChildren & {
   component: React.ElementType;
   defaultValue: number;
-  value: number;
+  value?: number;
   max: number;
   currency: string;
   config: IntlFormatterConfig;

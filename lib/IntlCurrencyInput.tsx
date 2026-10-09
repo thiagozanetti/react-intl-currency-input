@@ -44,11 +44,24 @@ const IntlCurrencyInput = ({
 
   // to prevent a malformed config object
   const safeConfig = useMemo(() => () => {
-    const { formats: { number: { [currency]: { maximumFractionDigits = MAXIMUM_FRACTION_DIGITS } } } } = config;
+    const configuredNumberFormat = config.formats.number[currency];
+    const { maximumFractionDigits = MAXIMUM_FRACTION_DIGITS } = configuredNumberFormat;
 
     const finalConfig = {
       ...defaultConfig,
       ...config,
+      formats: {
+        ...defaultConfig.formats,
+        ...config.formats,
+        number: {
+          ...defaultConfig.formats.number,
+          ...config.formats.number,
+          [currency]: {
+            ...defaultConfig.formats.number[currency],
+            ...configuredNumberFormat,
+          },
+        },
+      },
     };
 
     // at the moment this prevents problems when converting numbers
@@ -97,21 +110,21 @@ const IntlCurrencyInput = ({
   const updateValues = (entry: number) => {
     const [calculatedValue, calculatedMaskedValue] = calculateValues(entry);
 
-    if (!max || calculatedValue <= max) {
+    if (max === undefined || calculatedValue <= max) {
       setMaskedValue(calculatedMaskedValue);
 
-      return [calculatedValue, calculatedMaskedValue];
+      return [calculatedValue, calculatedMaskedValue, true] as const;
     } else {
-      return [normalizeValue(maskedValue), maskedValue];
+      return [normalizeValue(maskedValue), maskedValue, false] as const;
     }
   };
 
   const handleChange = (event: { preventDefault: () => void; target: { value: number; }; }) => {
     event.preventDefault();
 
-    const [localValue, localMaskedValue] = updateValues(event.target.value);
+    const [localValue, localMaskedValue, accepted] = updateValues(event.target.value);
 
-    if (localMaskedValue) {
+    if (accepted && localMaskedValue) {
       onChange(event, localValue, localMaskedValue);
     }
   };
@@ -120,7 +133,8 @@ const IntlCurrencyInput = ({
     const [localValue, localMaskedValue] = updateValues(event.target.value);
 
     if (autoReset) {
-      calculateValues(0);
+      const [, resetMaskedValue] = calculateValues(0);
+      setMaskedValue(resetMaskedValue);
     }
 
     if (localMaskedValue) {
@@ -130,7 +144,7 @@ const IntlCurrencyInput = ({
 
   const handleFocus = (event: { target: { select: () => void; value: number; }; }) => {
     if (autoSelect) {
-      (localInputRef.current as any).select();
+      event.target.select();
     }
 
     const [localValue, localMaskedValue] = updateValues(event.target.value);
@@ -143,13 +157,16 @@ const IntlCurrencyInput = ({
   const handleKeyUp = (event: { key: any; keyCode: any; }) => onKeyPress(event, event.key, event.keyCode);
 
   useEffect(() => {
-    const currentValue = value || defaultValue || 0;
+    const currentValue = value ?? defaultValue ?? 0;
     const [, localMaskedValue] = calculateValues(currentValue);
 
     setMaskedValue(localMaskedValue);
 
     if (autoFocus && localInputRef.current) {
       (localInputRef.current as any).focus();
+    } else if (autoFocus && inputRef && typeof inputRef !== 'function') {
+      const externalInputRef = inputRef as any;
+      externalInputRef.current?.focus();
     }
   }, [autoFocus, autoSelect, currency, value, defaultValue, config]);
 
@@ -191,7 +208,6 @@ IntlCurrencyInput.propTypes = {
 IntlCurrencyInput.defaultProps = {
   component: 'input',
   currency: 'USD',
-  value: 0,
   config: defaultConfig,
   autoFocus: false,
   autoSelect: false,
