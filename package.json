@@ -3,9 +3,19 @@
   "version": "1.0.0",
   "description": "A React component for i18n currency input using the Intl API.",
   "type": "module",
-  "main": "index.cjs",
-  "module": "index.js",
-  "types": "index.d.ts",
+  "main": "./dist/lib/index.cjs",
+  "module": "./dist/lib/index.js",
+  "types": "./dist/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/index.js",
+      "require": "./dist/lib/index.cjs"
+    }
+  },
+  "files": [
+    "dist/lib"
+  ],
   "scripts": {
     "start:app": "vite app --port 3000 --host 0.0.0.0 --open",
     "typecheck": "tsc --noEmit && tsc --project tsconfig.node.json --noEmit",
@@ -16,8 +26,9 @@
     "test:e2e": "playwright test --config=playwright.config.ts",
     "test:legacy:browser": "playwright test --config=playwright.legacy.config.ts --project=chromium --project=firefox --project=webkit",
     "build:app": "rm -rf dist/app && vite build app --outDir $PWD/dist/app --minify",
-    "build:lib": "rm -rf dist/lib && tsup lib/index.tsx --out-dir dist/lib --format cjs,esm --dts",
+    "build:lib": "rm -rf dist/lib && tsup lib/index.tsx --out-dir dist/lib --format cjs,esm --dts --external react --external react-dom",
     "pack:check": "npm pack --dry-run",
+    "verify:package": "node scripts/verify-package.mjs",
     "verify:fixtures": "node scripts/verify-fixtures.mjs",
     "verify:docs": "node scripts/verify-docs.mjs",
     "test": "vitest",

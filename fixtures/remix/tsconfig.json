@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": false,
+    "target": "ES2022",
+    "types": ["node"]
+  },
+  "include": ["app/**/*.ts", "app/**/*.tsx", "vite.config.ts"]
+}

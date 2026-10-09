@@ -1,10 +1,12 @@
-import { existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const fixtureRoot = new URL('../fixtures/', import.meta.url);
+const root = dirname(dirname(fileURLToPath(import.meta.url)));
 
-if (!existsSync(fixtureRoot)) {
-  console.log('No consumer fixtures are present yet; fixture verification is deferred to the package-boundary task.');
-  process.exit(0);
-}
-
-console.log('Consumer fixture directory found; detailed fixture checks are owned by the package-boundary task.');
+// Keep fixture verification coupled to the tarball verifier. A no-op check
+// could hide stale manifests or source imports that bypass the package boundary.
+execFileSync(process.execPath, [join(root, 'scripts', 'verify-package.mjs')], {
+  cwd: root,
+  stdio: 'inherit',
+});

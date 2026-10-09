@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "jsx": "preserve",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": false,
+    "target": "ES2022"
+  },
+  "include": ["app/**/*.ts", "app/**/*.tsx"]
+}
