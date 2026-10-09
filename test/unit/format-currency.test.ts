@@ -28,6 +28,7 @@ describe('modern currency formatting', () => {
         maximumFractionDigits: 3,
       }),
     );
+    expect(formatCurrency(1, 'en-US', 'USD', { maximumFractionDigits: 0 })).toBe('$1');
     expect(formatCurrency(1, 'en-US', 'USD', { minimumFractionDigits: 0, maximumFractionDigits: 0 })).toBe(
       '$1',
     );

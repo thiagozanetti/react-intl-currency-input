@@ -7,7 +7,10 @@ export function resolveCurrencyFormatOptions(
   currency: string,
   options: Intl.NumberFormatOptions = {},
 ): Intl.NumberFormatOptions {
-  const minimumFractionDigits = options.minimumFractionDigits ?? 2;
+  const minimumFractionDigits = options.minimumFractionDigits
+    ?? (options.maximumFractionDigits === undefined
+      ? 2
+      : Math.min(2, options.maximumFractionDigits));
   const maximumFractionDigits = options.maximumFractionDigits ?? Math.max(minimumFractionDigits, 2);
 
   if (
