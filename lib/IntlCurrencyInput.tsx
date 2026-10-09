@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { any, bool, func, instanceOf, node, number, oneOfType, shape, string } from 'prop-types';
 
 import formatCurrency from './format-currency';
@@ -156,7 +156,7 @@ const IntlCurrencyInput = ({
 
   const handleKeyUp = (event: { key: any; keyCode: any; }) => onKeyPress(event, event.key, event.keyCode);
 
-  const assignInputRef = (element: HTMLInputElement | null) => {
+  const assignInputRef = useCallback((element: HTMLInputElement | null) => {
     localInputRef.current = element;
 
     if (typeof inputRef === 'function') {
@@ -164,7 +164,7 @@ const IntlCurrencyInput = ({
     } else if (inputRef) {
       inputRef.current = element;
     }
-  };
+  }, [inputRef]);
 
   useEffect(() => {
     const currentValue = value ?? defaultValue ?? 0;
