@@ -38,7 +38,7 @@ const IntlCurrencyInput = ({
   inputRef,
   ...otherProps
 }: IntlCurrencyInputProps) => {
-  const localInputRef = useRef(null);
+  const localInputRef = useRef<HTMLInputElement | null>(null);
 
   const [maskedValue, setMaskedValue] = useState('0');
 
@@ -156,6 +156,16 @@ const IntlCurrencyInput = ({
 
   const handleKeyUp = (event: { key: any; keyCode: any; }) => onKeyPress(event, event.key, event.keyCode);
 
+  const assignInputRef = (element: HTMLInputElement | null) => {
+    localInputRef.current = element;
+
+    if (typeof inputRef === 'function') {
+      inputRef(element);
+    } else if (inputRef) {
+      inputRef.current = element;
+    }
+  };
+
   useEffect(() => {
     const currentValue = value ?? defaultValue ?? 0;
     const [, localMaskedValue] = calculateValues(currentValue);
@@ -164,16 +174,15 @@ const IntlCurrencyInput = ({
 
     if (autoFocus && localInputRef.current) {
       (localInputRef.current as any).focus();
-    } else if (autoFocus && inputRef && typeof inputRef !== 'function') {
-      const externalInputRef = inputRef as any;
-      externalInputRef.current?.focus();
+    } else if (autoFocus) {
+      localInputRef.current?.focus();
     }
   }, [autoFocus, autoSelect, currency, value, defaultValue, config]);
 
   return (
     <InputComponent
       {...otherProps}
-      ref={inputRef ? inputRef : localInputRef}
+      ref={assignInputRef}
       value={maskedValue}
       onChange={handleChange}
       onBlur={handleBlur}
