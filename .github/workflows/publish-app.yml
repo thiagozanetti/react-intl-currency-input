@@ -13,18 +13,20 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 24.x
+          cache: npm
       - run: npm ci
-      - run: npx turbo run lint
-      - run: npx turbo run build:app
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build:app
 
       - name: Sav app artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app
           path: dist/app
@@ -43,12 +45,12 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 24.x
 
       - name: Download previously built app artifacts
         uses: actions/download-artifact@v3

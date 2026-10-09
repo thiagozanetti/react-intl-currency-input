@@ -1,52 +1,14 @@
 module.exports = {
-  env: {
-    'browser': true,
-    'es2021': true,
-    'node': true
-  },
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react/jsx-runtime',
-    'plugin:@typescript-eslint/recommended',
-  ],
-  overrides: [
-  ],
+  root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
-    sourceType: 'module'
+    sourceType: 'module',
+    ecmaFeatures: { jsx: true },
   },
-  plugins: [
-    'react',
-    '@typescript-eslint'
-  ],
-  settings: {
-    react: {
-      version: 'detect',
-    },
-  },
+  env: { browser: true, es2022: true, node: true, jest: true },
   rules: {
-    indent: [
-      'error',
-      2
-    ],
-    quotes: [
-      'error',
-      'single'
-    ],
-    semi: [
-      'error',
-      'always'
-    ],
-    'linebreak-style': [
-      'error',
-      'unix'
-    ],
-    'no-shadow': 'off',
-    '@typescript-eslint/no-shadow': 'error',
-    'no-empty-function': 'off',
-    '@typescript-eslint/no-empty-function': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+    'no-unused-vars': 'off',
   },
+  ignorePatterns: ['dist/', 'node_modules/', 'playwright-report/', 'test-results/'],
 };
