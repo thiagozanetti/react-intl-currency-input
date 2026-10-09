@@ -53,7 +53,7 @@ jobs:
           node-version: 24.x
 
       - name: Download previously built app artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: app
 

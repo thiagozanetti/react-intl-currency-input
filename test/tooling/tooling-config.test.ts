@@ -36,4 +36,30 @@ describe('modern tooling configuration', () => {
     expect(config).toMatch(/name:\s*['"]firefox['"]/);
     expect(config).toMatch(/name:\s*['"]webkit['"]/);
   });
+
+  it('keeps the publish workflow and lint toolchain modern and substantive', () => {
+    const workflow = readFileSync(
+      resolve(root, '.github/workflows/publish-app.yml'),
+      'utf8',
+    );
+    const eslintConfig = readFileSync(resolve(root, '.eslintrc.cjs'), 'utf8');
+
+    expect(workflow).toContain('actions/download-artifact@v4');
+    expect(eslintConfig).toContain('root: true');
+    expect(eslintConfig).toContain("'eslint:recommended'");
+    expect(eslintConfig).toContain("'plugin:@typescript-eslint/recommended'");
+    expect(eslintConfig).toContain("'plugin:react/recommended'");
+    expect(packageJson.devDependencies).toEqual(
+      expect.objectContaining({
+        '@typescript-eslint/eslint-plugin': expect.stringMatching(/^\^?8\./),
+        '@typescript-eslint/parser': expect.stringMatching(/^\^?8\./),
+        eslint: expect.stringMatching(/^\^?9\./),
+        typescript: expect.stringMatching(/^\^?5\.9\./),
+        vite: expect.stringMatching(/^\^?7\./),
+        vitest: expect.stringMatching(/^\^?4\./),
+        '@vitejs/plugin-react': expect.stringMatching(/^\^?5\./),
+        tsup: expect.stringMatching(/^\^?8\./),
+      }),
+    );
+  });
 });
