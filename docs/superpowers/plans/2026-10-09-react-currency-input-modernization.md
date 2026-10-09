@@ -119,7 +119,7 @@ results; an unverified environment is not an accepted baseline.
 
   Commit with `git add test playwright.legacy.config.ts vite.config.ts package.json .node-version && git commit -m "test: characterize legacy currency input"`.
 
-### Task 1.5: Fix historical regressions under the legacy API
+### Task 2: Fix historical regressions under the legacy API
 
 **Files:**
 - Modify: `lib/IntlCurrencyInput.tsx`
@@ -153,7 +153,7 @@ results; an unverified environment is not an accepted baseline.
 
   Commit with `git add lib test/legacy && git commit -m "fix: close legacy currency input regressions"`.
 
-### Task 2: Modernize dependencies, test infrastructure, and CI
+### Task 3: Modernize dependencies, test infrastructure, and CI
 
 **Files:**
 - Modify: `package.json`
@@ -204,7 +204,7 @@ results; an unverified environment is not an accepted baseline.
 
   Commit with `git add package.json package-lock.json tsconfig.json tsconfig.node.json vite.config.ts vitest.config.ts playwright.config.ts .github app/test.setup.ts && git commit -m "build: modernize node and test tooling"`.
 
-### Task 3: Implement exact decimal utilities and public types
+### Task 4: Implement exact decimal utilities and public types
 
 **Files:**
 - Create: `lib/currency-decimal.ts`
@@ -247,7 +247,7 @@ results; an unverified environment is not an accepted baseline.
 
   Commit with `git add lib test/unit && git commit -m "feat: add exact currency normalization utilities"`.
 
-### Task 4: Implement the native `CurrencyInput` component
+### Task 5: Implement the native `CurrencyInput` component
 
 **Files:**
 - Create: `lib/CurrencyInput.tsx`
@@ -295,7 +295,7 @@ results; an unverified environment is not an accepted baseline.
 
   Commit with `git add lib app test/component && git commit -m "feat: replace legacy input with native currency input"`.
 
-### Task 5: Build package exports and consumer compatibility
+### Task 6: Build package exports and consumer compatibility
 
 **Files:**
 - Modify: `package.json`
@@ -340,7 +340,7 @@ results; an unverified environment is not an accepted baseline.
 
   Commit with `git add package.json package-lock.json lib/index.tsx scripts fixtures && git commit -m "build: verify dual-format package exports"`.
 
-### Task 6: Add Playwright journeys and CI acceptance coverage
+### Task 7: Add Playwright journeys and CI acceptance coverage
 
 **Files:**
 - Create: `test/browser/currency-input.spec.ts`
@@ -380,7 +380,7 @@ results; an unverified environment is not an accepted baseline.
 
   Commit with `git add test/browser playwright.config.ts .github/workflows && git commit -m "test: cover currency input browser journeys"`.
 
-### Task 7: Documentation, changelog, release metadata, and final verification
+### Task 8: Documentation, changelog, release metadata, and final verification
 
 **Files:**
 - Modify: `README.md`
