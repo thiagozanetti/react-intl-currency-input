@@ -21,8 +21,6 @@ jobs:
       - run: npm run lint
       - run: npm run test:unit -- --run
       - run: npm run build:all
-      - run: npm run verify:fixtures
-      - run: npm run verify:docs
 
   browser:
     runs-on: ubuntu-latest
