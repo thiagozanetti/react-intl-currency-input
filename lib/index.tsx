@@ -1,4 +1,4 @@
-export { default } from './IntlCurrencyInput';
-export { default as formatCurrency } from './format-currency';
-export { default as normalizeCurrencyValue } from './normalize-currency-value';
-export type { CurrencyInputProps } from './types';
+export { CurrencyInput, default } from './CurrencyInput';
+export { formatCurrency } from './format-currency';
+export { normalizeCurrencyValue } from './normalize-currency-value';
+export type { CurrencyInputProps, LocaleTag } from './types';

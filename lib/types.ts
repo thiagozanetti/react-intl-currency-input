@@ -29,7 +29,7 @@ export type IntlCurrencyInputProps = React.PropsWithChildren & {
 };
 
 export interface CurrencyInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'defaultValue' | 'onChange' | 'onFocus' | 'onBlur' | 'min' | 'max'> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'defaultValue' | 'onChange' | 'onFocus' | 'onBlur' | 'onKeyPress' | 'min' | 'max' | 'type'> {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number, formattedValue: string) => void;
