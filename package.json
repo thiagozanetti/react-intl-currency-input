@@ -11,6 +11,7 @@
     "lint": "tsc",
     "preview:app": "vite preview app --outDir $PWD/dist/app --port 3000 --host 0.0.0.0 --open",
     "build:all": "npm run build:lib && npm run build:app",
+    "test:legacy:browser": "playwright test --config=playwright.legacy.config.ts --project=chromium --project=firefox --project=webkit",
     "build:app": "rm -rf dist/app && vite build app --outDir $PWD/dist/app --minify",
     "build:lib": "rm -rf dist/lib && tsup lib/index.tsx --out-dir dist/lib --format cjs,esm --dts",
     "test": "vitest",
