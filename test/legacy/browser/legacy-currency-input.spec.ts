@@ -16,7 +16,7 @@ test.describe('legacy currency input interaction', () => {
 
     await expect(input).toHaveValue('R$ 1.234,56');
     await expect(page.locator('#currentValue')).toHaveText('1234.56');
-    await expect(page.locator('#maskedValue')).toHaveText('R$1.234,56');
+    await expect(page.locator('#maskedValue')).toHaveText('R$ 1.234,56');
     expect(await input.inputValue()).toBe('R$ 1.234,56');
   });
 

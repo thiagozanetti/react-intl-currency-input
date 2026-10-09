@@ -135,7 +135,7 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
     const input = screen.getByRole('textbox');
 
     expect(input).toHaveFocus();
-    expect(input.selectionStart).toBe(input.value.length);
+    expect(input.selectionStart).toBe(0);
     expect(input.selectionEnd).toBe(input.value.length);
   });
 

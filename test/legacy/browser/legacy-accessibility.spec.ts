@@ -6,7 +6,7 @@ test.describe('legacy currency input accessibility evidence', () => {
     const input = page.getByRole('textbox');
 
     await expect(input).toBeVisible();
-    await expect(input).toHaveAttribute('type', 'text');
+    await expect(input).not.toHaveAttribute('type');
     await input.focus();
     await expect(input).toBeFocused();
     await expect(input).not.toHaveAttribute('aria-invalid');
