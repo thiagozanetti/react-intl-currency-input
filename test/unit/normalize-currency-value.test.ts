@@ -23,7 +23,7 @@ describe('normalizeCurrencyValue', () => {
     expect(normalizeCurrencyValue(-0, { maximumFractionDigits: 2 })).toBe(0);
     expect(normalizeCurrencyValue(1e3, { maximumFractionDigits: 2 })).toBe(1000);
     expect(normalizeCurrencyValue('12345678901234567890.125', { maximumFractionDigits: 3 })).toBe(
-      12345678901234567890.125,
+      Number('12345678901234567890.125'),
     );
   });
 

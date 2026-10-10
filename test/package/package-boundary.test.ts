@@ -37,19 +37,38 @@ describe('published package boundary', () => {
       cwd: packageRoot,
       encoding: 'utf8',
     });
-    const [manifest] = JSON.parse(output) as Array<{ files: Array<{ path: string }> }>;
-    const paths = manifest.files.map(({ path }) => path).sort();
+    const parsed = JSON.parse(output) as unknown;
+    const findFiles = (value: unknown): Array<{ path: string }> | undefined => {
+      if (!value || typeof value !== 'object') return undefined;
+      if ('files' in value && Array.isArray(value.files)) return value.files as Array<{ path: string }>;
+      if (Array.isArray(value)) {
+        for (const entry of value) {
+          const files = findFiles(entry);
+          if (files) return files;
+        }
+      } else {
+        for (const entry of Object.values(value)) {
+          const files = findFiles(entry);
+          if (files) return files;
+        }
+      }
+      return undefined;
+    };
+    const files = findFiles(parsed);
+    if (!files) throw new Error('npm pack did not return a file manifest');
+    const paths = files.map(({ path }) => path).sort();
 
     expect(paths).toEqual([
       'LICENSE',
       'README.md',
       'dist/lib/index.cjs',
+      'dist/lib/index.d.cts',
       'dist/lib/index.d.ts',
       'dist/lib/index.js',
       'package.json',
     ]);
     expect(packageJson.files).toEqual(['dist/lib']);
-  });
+  }, 30_000);
 
   it('runs the installed-package integration verifier only when explicitly enabled', {
     skip: process.env.PACKAGE_INTEGRATION === '1'

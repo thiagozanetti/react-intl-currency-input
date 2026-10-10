@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import IntlCurrencyInput from '../../lib';
+import IntlCurrencyInput from './LegacyIntlCurrencyInput';
 
 describe('legacy configuration behavior', () => {
   it('throws when the selected currency has no format entry', () => {

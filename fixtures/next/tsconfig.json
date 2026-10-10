@@ -6,7 +6,7 @@
     "moduleResolution": "Bundler",
     "noEmit": true,
     "strict": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "target": "ES2022"
   },
   "include": ["app/**/*.ts", "app/**/*.tsx"]

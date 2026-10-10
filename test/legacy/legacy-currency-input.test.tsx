@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import IntlCurrencyInput from '../../lib';
+import IntlCurrencyInput from './LegacyIntlCurrencyInput';
 import { IntlFormatterConfig } from '../../lib/types';
 
 const usdConfig: IntlFormatterConfig = {
@@ -183,6 +183,7 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
     const CustomInput = forwardRef<HTMLInputElement, React.ComponentProps<'input'>>((props, ref) => (
       <input {...props} ref={ref} data-custom="true" />
     ));
+    CustomInput.displayName = 'CustomInput';
     render(<IntlCurrencyInput component={CustomInput} currency="USD" config={usdConfig} />);
 
     expect(screen.getByRole('textbox')).toHaveAttribute('data-custom', 'true');

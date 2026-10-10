@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('legacy currency input visual evidence', () => {
+  test.skip(({ browserName }) => browserName === 'webkit',
+    'WebKit visual baselines are platform-specific and are not generated in the Linux test environment; the legacy WebKit journey remains covered by interaction assertions.',
+  );
+
   test('captures deterministic zero, positive, negative, and focused states', async ({ page }) => {
     await page.goto('/');
     const input = page.locator('input');

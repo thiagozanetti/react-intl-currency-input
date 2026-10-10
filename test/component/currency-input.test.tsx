@@ -179,6 +179,19 @@ describe('CurrencyInput public API', () => {
     expect(input.selectionEnd).toBe(input.value.length);
   });
 
+  it('re-anchors a pointer caret placement at the end', () => {
+    const onPointerUp = vi.fn();
+    render(<CurrencyInput currency="USD" defaultValue={12.34} onPointerUp={onPointerUp} />);
+    const input = screen.getByRole('textbox');
+
+    input.setSelectionRange(0, 0);
+    fireEvent.pointerUp(input, { pointerType: 'touch' });
+
+    expect(onPointerUp).toHaveBeenCalledTimes(1);
+    expect(input.selectionStart).toBe(input.value.length);
+    expect(input.selectionEnd).toBe(input.value.length);
+  });
+
   it('suppresses callbacks for rejected edits and preserves inclusive limits after rounding', () => {
     const onChange = vi.fn();
     const onValueChange = vi.fn();
@@ -201,7 +214,7 @@ describe('CurrencyInput public API', () => {
 
     expect(input).toHaveValue('-$1.23');
     expect(onChange).toHaveBeenCalledTimes(2);
-    expect(onValueChange).toHaveBeenCalledTimes(2);
+    expect(onValueChange).toHaveBeenCalledTimes(1);
   });
 
   it('keeps rapid controlled updates authoritative and suppresses formatting-only callbacks', () => {
@@ -235,6 +248,18 @@ describe('CurrencyInput public API', () => {
 
     expect(screen.getByRole('textbox')).toHaveValue('$0.00');
     expect(onChange).not.toHaveBeenCalled();
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it('uses exact minor-unit limits before converting a very large rejected digit stream', () => {
+    const onValueChange = vi.fn();
+    render(<CurrencyInput currency="USD" max={1_000_000_000_000_000} onValueChange={onValueChange} />);
+
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: '100000000000000001' },
+    });
+
+    expect(screen.getByRole('textbox')).toHaveValue('$0.00');
     expect(onValueChange).not.toHaveBeenCalled();
   });
 

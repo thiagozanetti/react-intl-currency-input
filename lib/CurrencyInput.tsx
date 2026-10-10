@@ -7,6 +7,7 @@ import {
   useState,
   type ChangeEvent,
   type ChangeEventHandler,
+  type ClipboardEvent,
   type KeyboardEvent,
 } from 'react';
 
@@ -35,7 +36,9 @@ function setNativeInputValue(input: HTMLInputElement, value: string): void {
   else input.value = value;
 }
 
-const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function CurrencyInput(
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+
+const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function CurrencyInputInner(
   {
     value,
     defaultValue,
@@ -76,29 +79,37 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
     );
 
   const propMinorUnits = valueToMinorUnits(value, scale);
-  const currentMinorUnits = isControlled || transitionedToUncontrolled
+  const minMinorUnits = min === undefined ? undefined : decimalToMinorUnits(min, scale);
+  const maxMinorUnits = max === undefined ? undefined : decimalToMinorUnits(max, scale);
+  const currentMinorUnits = isControlled
     ? propMinorUnits
-    : uncontrolledMinorUnits;
+    : transitionedToUncontrolled
+      ? valueToMinorUnits(defaultValue, scale)
+      : uncontrolledMinorUnits;
   const currentValue = displayValue(currentMinorUnits, scale);
   const formattedValue = formatCurrency(currentValue, locale, currency, resolvedOptions);
-  const outOfRange = (min !== undefined && currentValue < min) || (max !== undefined && currentValue > max);
+  const outOfRange = (minMinorUnits !== undefined && currentMinorUnits < minMinorUnits)
+    || (maxMinorUnits !== undefined && currentMinorUnits > maxMinorUnits);
   const latestFormattedValue = useRef(formattedValue);
   const nativeChangeInFlight = useRef(false);
   latestFormattedValue.current = formattedValue;
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     setCaretToEnd(inputRef.current);
   }, [formattedValue]);
 
   useEffect(() => {
     if (transitionedToUncontrolled) {
-      setUncontrolledState({ minorUnits: propMinorUnits, scale });
+      setUncontrolledState({ minorUnits: valueToMinorUnits(defaultValue, scale), scale });
     }
     wasControlled.current = isControlled;
-  }, [isControlled, propMinorUnits, scale, transitionedToUncontrolled]);
+  }, [defaultValue, isControlled, propMinorUnits, scale, transitionedToUncontrolled]);
 
   useEffect(() => {
-    if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production' && isControlled && outOfRange) {
+    const runtimeProcess = (globalThis as typeof globalThis & {
+      process?: { env?: { NODE_ENV?: string } };
+    }).process;
+    if (runtimeProcess?.env?.NODE_ENV !== 'production' && isControlled && outOfRange) {
       console.warn('CurrencyInput controlled value is outside the inclusive min/max range.');
     }
   }, [isControlled, outOfRange, value, min, max]);
@@ -113,13 +124,14 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
     nextMinorUnits: bigint,
     event?: ChangeEvent<HTMLInputElement>,
   ) => {
-    const nextValue = displayValue(nextMinorUnits, scale);
-    if ((min !== undefined && nextValue < min) || (max !== undefined && nextValue > max)) {
+    if ((minMinorUnits !== undefined && nextMinorUnits < minMinorUnits)
+      || (maxMinorUnits !== undefined && nextMinorUnits > maxMinorUnits)) {
       if (inputRef.current) inputRef.current.value = formattedValue;
       setCaretToEnd(inputRef.current);
       return;
     }
 
+    const nextValue = displayValue(nextMinorUnits, scale);
     const nextFormattedValue = formatCurrency(nextValue, locale, currency, resolvedOptions);
 
     if (!isControlled) setUncontrolledState({ minorUnits: nextMinorUnits, scale });
@@ -156,6 +168,13 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Home' || event.key === 'End') {
+      event.preventDefault();
+      setCaretToEnd(inputRef.current);
+      onKeyDown?.(event);
+      return;
+    }
+
     if (event.key !== 'Backspace' && event.key !== 'Delete' && event.key !== '-') {
       onKeyDown?.(event);
       return;
@@ -173,6 +192,15 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
     onKeyDown?.(event);
   };
 
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    inputProps.onPaste?.(event);
+    if (event.defaultPrevented) return;
+    event.preventDefault();
+    const { digits, negative } = sanitizeDigitStream(event.clipboardData.getData('text'));
+    const nextMinorUnits = BigInt(digits || '0') * (negative ? -1n : 1n);
+    commit(nextMinorUnits);
+  };
+
   return (
     <input
       {...inputProps}
@@ -182,7 +210,16 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
       value={formattedValue}
       aria-invalid={outOfRange ? true : inputProps['aria-invalid']}
       onChange={handleChange}
+      onPaste={handlePaste}
       onKeyDown={handleKeyDown}
+      onMouseUp={(event) => {
+        inputProps.onMouseUp?.(event);
+        setCaretToEnd(inputRef.current);
+      }}
+      onPointerUp={(event) => {
+        inputProps.onPointerUp?.(event);
+        setCaretToEnd(inputRef.current);
+      }}
     />
   );
 });

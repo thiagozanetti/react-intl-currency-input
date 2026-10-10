@@ -10,7 +10,7 @@ test.describe('legacy currency input interaction', () => {
 
     await expect(input).toHaveValue('R$ 0,00');
     await expect(page.locator('#currentValue')).toHaveText('0');
-    await expect(page.locator('#maskedValue')).toHaveText('R$0,00');
+    await expect(page.locator('#maskedValue')).toHaveText('R$ 0,00');
 
     await input.fill('123456');
 

@@ -2,7 +2,7 @@ const MAX_FRACTION_DIGITS = 20;
 
 function assertScale(scale: number): void {
   if (!Number.isInteger(scale) || scale < 0 || scale > MAX_FRACTION_DIGITS) {
-    throw new RangeError(`maximumFractionDigits must be an integer from 0 to ${MAX_FRACTION_DIGITS}`);
+    throw new RangeError(`maximum fraction digits must be an integer from 0 to ${MAX_FRACTION_DIGITS}`);
   }
 }
 

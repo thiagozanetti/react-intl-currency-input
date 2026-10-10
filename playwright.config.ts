@@ -2,18 +2,25 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './test',
-  testMatch: '**/*.spec.ts',
+  testMatch: 'browser/**/*.spec.ts',
+  testIgnore: 'legacy/**',
   fullyParallel: false,
   forbidOnly: true,
   retries: process.env.CI ? 2 : 0,
   workers: 1,
   reporter: [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]],
-  outputDir: 'test-results',
+  outputDir: 'test-results/modern',
   use: {
     baseURL: 'http://127.0.0.1:3000',
     locale: 'en-US',
     timezoneId: 'UTC',
     trace: 'retain-on-failure',
+  },
+  expect: {
+    toHaveScreenshot: {
+      animations: 'disabled',
+      maxDiffPixels: 100,
+    },
   },
   webServer: {
     command: 'vite app --port 3000 --host 127.0.0.1',

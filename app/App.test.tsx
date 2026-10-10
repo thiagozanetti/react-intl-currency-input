@@ -15,7 +15,7 @@ describe('App', () => {
 
       // then
       expect(container.querySelector('[id="currentValue"]')).toHaveTextContent('0');
-      expect(container.querySelector('[id="maskedValue"]')).toHaveTextContent('R$ 0,00');
+      expect(container.querySelector('[id="maskedValue"]')).toHaveTextContent(/R\$\s0,00/);
     });
 
     it('must display 1234.56 (R$ 1.234,56) as the result value', async () => {

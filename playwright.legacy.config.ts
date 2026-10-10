@@ -7,6 +7,7 @@ export default defineConfig({
   retries: 0,
   workers: 1,
   reporter: [['list'], ['html', { outputFolder: 'playwright-report/legacy', open: 'never' }]],
+  outputDir: 'test-results/legacy',
   use: {
     baseURL: 'http://127.0.0.1:3000',
     locale: 'en-US',
@@ -14,7 +15,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: 'npm run start:app',
+    command: 'vite test/legacy/browser --port 3000 --host 0.0.0.0',
     url: 'http://127.0.0.1:3000',
     reuseExistingServer: true,
     timeout: 30_000,

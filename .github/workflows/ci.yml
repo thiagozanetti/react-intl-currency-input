@@ -2,12 +2,20 @@ name: CI
 
 on:
   push:
-    branches: [ "**" ]
+    branches: [main]
   pull_request:
-    branches: [ "**" ]
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,10 +28,16 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test:unit -- --run
+      - run: npm run coverage
+      - run: npm run verify:docs
       - run: npm run build:all
+      - run: npm run pack:check
+      - run: npm run verify:package
       - run: npm run verify:fixtures
 
   browser:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     needs: verify
     steps:
@@ -35,4 +49,46 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium firefox webkit
-      - run: npm run test:e2e
+      - run: npm run test:e2e -- --project=chromium --project=firefox --project=webkit
+      - run: npm run test:legacy:browser -- --project=chromium --project=firefox --project=webkit
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+
+  audit:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+      - run: npm ci
+      - name: Run npm audit and retain the report
+        run: npm audit --audit-level=high --json > npm-audit.json
+        continue-on-error: true
+      - name: Upload npm audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-${{ github.run_id }}
+          path: npm-audit.json

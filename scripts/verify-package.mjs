@@ -11,6 +11,7 @@ const expectedFiles = [
   'LICENSE',
   'README.md',
   'dist/lib/index.cjs',
+  'dist/lib/index.d.cts',
   'dist/lib/index.d.ts',
   'dist/lib/index.js',
   'package.json',
@@ -73,11 +74,13 @@ import React, { createElement, createRef } from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
-import esm, { CurrencyInput, formatCurrency, normalizeCurrencyValue } from '${packageName}';
+import esm, * as esmNamespace from '${packageName}';
+const { CurrencyInput, formatCurrency, normalizeCurrencyValue } = esmNamespace;
 
 const require = createRequire(import.meta.url);
 const cjs = require('${packageName}');
-for (const loaded of [esm, cjs]) {
+assert.equal(typeof esm, 'object');
+for (const loaded of [esmNamespace, cjs]) {
   assert.equal(typeof loaded.default, 'object');
   assert.equal(typeof loaded.CurrencyInput, 'object');
   assert.equal(typeof loaded.formatCurrency, 'function');
@@ -90,7 +93,7 @@ assert.doesNotThrow(() => renderToString(createElement(CurrencyInput, { currency
 const dom = new JSDOM('<!doctype html><div id="root"></div>');
 globalThis.window = dom.window;
 globalThis.document = dom.window.document;
-globalThis.navigator = dom.window.navigator;
+Object.defineProperty(globalThis, 'navigator', { configurable: true, value: dom.window.navigator });
 globalThis.HTMLElement = dom.window.HTMLElement;
 globalThis.HTMLInputElement = dom.window.HTMLInputElement;
 const container = document.getElementById('root');
@@ -180,7 +183,7 @@ const ssrMarkup = renderToString(createElement(CurrencyInput, {
 const dom = new JSDOM('<!doctype html><div id="root">' + ssrMarkup + '</div>');
 globalThis.window = dom.window;
 globalThis.document = dom.window.document;
-globalThis.navigator = dom.window.navigator;
+Object.defineProperty(globalThis, 'navigator', { configurable: true, value: dom.window.navigator });
 globalThis.HTMLElement = dom.window.HTMLElement;
 globalThis.HTMLInputElement = dom.window.HTMLInputElement;
 const container = document.getElementById('root');
@@ -214,12 +217,13 @@ try {
   assert(packageJson.peerDependencies['react-dom'] === '>=18.2.0 <20', 'React DOM peer range is incorrect');
   run('npm', ['run', 'build:lib'], root);
 
-  const [packManifest] = JSON.parse(execFileSync(
+  const parsedPackManifest = JSON.parse(execFileSync(
     'npm', ['pack', '--json', '--pack-destination', verificationRoot],
     { cwd: root, encoding: 'utf8' },
   ));
-  verification.tarballName = packManifest.filename;
-  verification.tarball = join(verificationRoot, packManifest.filename);
+  const packManifest = Array.isArray(parsedPackManifest) ? parsedPackManifest[0] : parsedPackManifest;
+  verification.tarballName = packManifest.filename ?? `${packageName}-${packageJson.version}.tgz`;
+  verification.tarball = join(verificationRoot, verification.tarballName);
   assert(existsSync(verification.tarball), 'npm pack did not create a tarball');
 
   const archivePaths = execFileSync('tar', ['-tzf', verification.tarball], { encoding: 'utf8' })

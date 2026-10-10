@@ -60,9 +60,15 @@ format options, refs, accessibility, SSR, framework fixtures, and every
 removed legacy prop. Documentation examples are acceptance criteria.
 
 Set final package metadata to `1.0.0`. SemVer prereleases use identifiers such
-as `1.0.0-alpha.1`, `1.0.0-beta.1`, and `1.0.0-rc.1`. Implementation work
-prepares the package but does not publish to npm, create an external release,
-or push a tag without explicit authorization.
+as `1.0.0-alpha.1`, `1.0.0-beta.1`, and `1.0.0-rc.1`.
+
+Normal edits, pushes, pull requests, and merges do not trigger promotion. Only
+a published GitHub Release triggers CD. Release tags must match `package.json`
+exactly and must be bare stable SemVer tags such as `1.0.0`; prerelease tags
+are rejected before side effects. Agents must not create or push tags without
+explicit authorization. Before modifying release tooling, inspect and follow
+the release workflow and preserve its least-privilege, protected-environment,
+artifact-promotion, and evidence requirements.
 
 Unrelated findings belong in follow-up notes unless they block an acceptance
 criterion, compromise correctness or safety, or invalidate the release

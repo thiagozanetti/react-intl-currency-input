@@ -35,8 +35,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "big.js": "^6.2.1",
-    "prop-types": "^15.8.1"
+    "big.js": "^6.2.1"
   },
   "peerDependencies": {
     "react": ">=18.2.0 <20",
@@ -55,6 +54,7 @@
     "@typescript-eslint/eslint-plugin": "8.69.0",
     "@typescript-eslint/parser": "8.69.0",
     "@vitejs/plugin-react": "5.2.0",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint": "9.39.5",
     "eslint-plugin-react": "7.37.5",
     "jsdom": "^21.1.1",

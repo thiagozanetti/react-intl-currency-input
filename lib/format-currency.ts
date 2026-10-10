@@ -22,10 +22,13 @@ export function resolveCurrencyFormatOptions(
     maximumFractionDigits > 20 ||
     minimumFractionDigits > maximumFractionDigits
   ) {
-    throw new RangeError('Invalid currency format configuration: minimumFractionDigits must not exceed maximumFractionDigits');
+    throw new RangeError('Invalid currency format configuration: fraction digits minimum must not exceed maximum');
   }
 
   try {
+    if (globalThis.Intl.NumberFormat.supportedLocalesOf(locale).length === 0) {
+      throw new RangeError(`Unsupported locale: ${locale}`);
+    }
     new globalThis.Intl.NumberFormat(locale, { ...options, style: 'currency', currency });
   } catch (error) {
     const reason = error instanceof RangeError && /locale/i.test(error.message) ? 'locale' : 'currency or format options';

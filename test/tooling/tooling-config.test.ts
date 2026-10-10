@@ -37,9 +37,9 @@ describe('modern tooling configuration', () => {
     expect(config).toMatch(/name:\s*['"]webkit['"]/);
   });
 
-  it('keeps the publish workflow and lint toolchain modern and substantive', () => {
+  it('keeps the release workflow and lint toolchain modern and substantive', () => {
     const workflow = readFileSync(
-      resolve(root, '.github/workflows/publish-app.yml'),
+      resolve(root, '.github/workflows/release.yml'),
       'utf8',
     );
     const eslintConfig = readFileSync(resolve(root, '.eslintrc.cjs'), 'utf8');
