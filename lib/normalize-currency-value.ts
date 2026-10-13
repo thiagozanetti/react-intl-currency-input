@@ -21,10 +21,7 @@ function sanitizeDigitStream(value: string): { digits: string; negative: boolean
   return { digits: digits.replace(/^0+(?=\d)/, ''), negative };
 }
 
-export function normalizeCurrencyValue(
-  value: string | number,
-  options: NormalizeCurrencyValueOptions = {},
-): number {
+export function normalizeCurrencyValue(value: string | number, options: NormalizeCurrencyValueOptions = {}): number {
   const scale = options.maximumFractionDigits ?? 2;
   validateFractionDigits(scale);
 

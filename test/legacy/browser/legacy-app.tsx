@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-
-import LegacyIntlCurrencyInput from '../LegacyIntlCurrencyInput';
 import type { IntlFormatterConfig } from '../../../lib/types';
+import LegacyIntlCurrencyInput from '../LegacyIntlCurrencyInput';
 
 import './legacy-app.css';
 
@@ -27,7 +26,7 @@ function LegacyApp() {
   return (
     <section>
       <LegacyIntlCurrencyInput
-        currency="BRL"
+        currency='BRL'
         config={config}
         defaultValue={0}
         max={999999999.99}
@@ -38,8 +37,12 @@ function LegacyApp() {
           setMaskedValue(nextMaskedValue);
         }}
       />
-      <p>Value: <strong id="currentValue">{value}</strong></p>
-      <p>Masked Value: <strong id="maskedValue">{maskedValue}</strong></p>
+      <p>
+        Value: <strong id='currentValue'>{value}</strong>
+      </p>
+      <p>
+        Masked Value: <strong id='maskedValue'>{maskedValue}</strong>
+      </p>
     </section>
   );
 }

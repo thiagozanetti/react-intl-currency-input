@@ -7,7 +7,7 @@ import CurrencyInput from '../../lib';
 
 describe('CurrencyInput public API', () => {
   it('requires currency and renders a native text input with default formatting', () => {
-    render(<CurrencyInput currency="USD" />);
+    render(<CurrencyInput currency='USD' />);
 
     const input = screen.getByRole('textbox');
     expect(input).toHaveAttribute('type', 'text');
@@ -16,19 +16,17 @@ describe('CurrencyInput public API', () => {
   });
 
   it('treats controlled zero as authoritative and initializes uncontrolled values from defaultValue', () => {
-    const { rerender } = render(
-      <CurrencyInput currency="USD" value={0} defaultValue={12.34} />,
-    );
+    const { rerender } = render(<CurrencyInput currency='USD' value={0} defaultValue={12.34} />);
     expect(screen.getByRole('textbox')).toHaveValue('$0.00');
 
-    rerender(<CurrencyInput currency="USD" defaultValue={12.34} />);
+    rerender(<CurrencyInput currency='USD' defaultValue={12.34} />);
     expect(screen.getByRole('textbox')).toHaveValue('$12.34');
   });
 
   it('keeps the initial uncontrolled value when defaultValue changes', () => {
-    const { rerender } = render(<CurrencyInput currency="USD" defaultValue={12.34} />);
+    const { rerender } = render(<CurrencyInput currency='USD' defaultValue={12.34} />);
 
-    rerender(<CurrencyInput currency="USD" defaultValue={56.78} />);
+    rerender(<CurrencyInput currency='USD' defaultValue={56.78} />);
 
     expect(screen.getByRole('textbox')).toHaveValue('$12.34');
   });
@@ -37,23 +35,12 @@ describe('CurrencyInput public API', () => {
     const ref = { current: null as HTMLInputElement | null };
     const onValueChange = vi.fn();
     const { rerender } = render(
-      <CurrencyInput
-        ref={ref}
-        currency="USD"
-        defaultValue={12.34}
-        onValueChange={onValueChange}
-      />,
+      <CurrencyInput ref={ref} currency='USD' defaultValue={12.34} onValueChange={onValueChange} />,
     );
 
     expect(ref.current).toBeInstanceOf(HTMLInputElement);
     rerender(
-      <CurrencyInput
-        ref={ref}
-        currency="EUR"
-        locale="de-DE"
-        defaultValue={12.34}
-        onValueChange={onValueChange}
-      />,
+      <CurrencyInput ref={ref} currency='EUR' locale='de-DE' defaultValue={12.34} onValueChange={onValueChange} />,
     );
 
     expect(screen.getByRole('textbox')).toHaveValue('12,34 €');
@@ -69,7 +56,7 @@ describe('CurrencyInput public API', () => {
       calls.push(`value:${value}:${formattedValue}`);
     });
 
-    render(<CurrencyInput currency="USD" onChange={onChange} onValueChange={onValueChange} />);
+    render(<CurrencyInput currency='USD' onChange={onChange} onValueChange={onValueChange} />);
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '123456' } });
 
     expect(screen.getByRole('textbox')).toHaveValue('$1,234.56');
@@ -79,16 +66,14 @@ describe('CurrencyInput public API', () => {
   it('does not leave a controlled display ahead of a lagging parent', async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
-    const { rerender } = render(
-      <CurrencyInput currency="USD" value={1} onValueChange={onValueChange} />,
-    );
+    const { rerender } = render(<CurrencyInput currency='USD' value={1} onValueChange={onValueChange} />);
     const input = screen.getByRole('textbox');
 
     await user.click(input);
     await user.keyboard('{End}2');
     expect(onValueChange).toHaveBeenCalledWith(10.02, '$10.02');
 
-    rerender(<CurrencyInput currency="USD" value={1} onValueChange={onValueChange} />);
+    rerender(<CurrencyInput currency='USD' value={1} onValueChange={onValueChange} />);
     expect(input).toHaveValue('$1.00');
   });
 
@@ -97,7 +82,7 @@ describe('CurrencyInput public API', () => {
     const calls: string[] = [];
     const onChange = vi.fn(() => calls.push('change'));
     const onValueChange = vi.fn(() => calls.push('value'));
-    render(<CurrencyInput currency="USD" defaultValue={12.34} onChange={onChange} onValueChange={onValueChange} />);
+    render(<CurrencyInput currency='USD' defaultValue={12.34} onChange={onChange} onValueChange={onValueChange} />);
     const input = screen.getByRole('textbox');
 
     await user.click(input);
@@ -113,12 +98,7 @@ describe('CurrencyInput public API', () => {
 
   it('formats digit streams at the effective maximum fraction scale and anchors deletion at the end', async () => {
     const user = userEvent.setup();
-    render(
-      <CurrencyInput
-        currency="USD"
-        formatOptions={{ minimumFractionDigits: 3, maximumFractionDigits: 3 }}
-      />,
-    );
+    render(<CurrencyInput currency='USD' formatOptions={{ minimumFractionDigits: 3, maximumFractionDigits: 3 }} />);
     const input = screen.getByRole('textbox');
 
     await user.type(input, '12345');
@@ -139,10 +119,7 @@ describe('CurrencyInput public API', () => {
   ])('uses maximumFractionDigits=%i for the digit stream', async (scale, digits, expected) => {
     const user = userEvent.setup();
     render(
-      <CurrencyInput
-        currency="USD"
-        formatOptions={{ minimumFractionDigits: scale, maximumFractionDigits: scale }}
-      />,
+      <CurrencyInput currency='USD' formatOptions={{ minimumFractionDigits: scale, maximumFractionDigits: scale }} />,
     );
 
     await user.type(screen.getByRole('textbox'), String(digits));
@@ -153,7 +130,7 @@ describe('CurrencyInput public API', () => {
   it('sanitizes pasted formatting and toggles the sign with minus', async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
-    render(<CurrencyInput currency="USD" onValueChange={onValueChange} />);
+    render(<CurrencyInput currency='USD' onValueChange={onValueChange} />);
     const input = screen.getByRole('textbox');
 
     await user.click(input);
@@ -169,7 +146,7 @@ describe('CurrencyInput public API', () => {
 
   it.each(['Backspace', 'Delete'])('removes the rightmost digit with %s', async (key) => {
     const user = userEvent.setup();
-    render(<CurrencyInput currency="USD" defaultValue={12.34} />);
+    render(<CurrencyInput currency='USD' defaultValue={12.34} />);
     const input = screen.getByRole('textbox');
     await user.click(input);
     await user.keyboard(`{${key}}`);
@@ -181,7 +158,7 @@ describe('CurrencyInput public API', () => {
 
   it('re-anchors a pointer caret placement at the end', () => {
     const onPointerUp = vi.fn();
-    render(<CurrencyInput currency="USD" defaultValue={12.34} onPointerUp={onPointerUp} />);
+    render(<CurrencyInput currency='USD' defaultValue={12.34} onPointerUp={onPointerUp} />);
     const input = screen.getByRole('textbox');
 
     input.setSelectionRange(0, 0);
@@ -197,7 +174,7 @@ describe('CurrencyInput public API', () => {
     const onValueChange = vi.fn();
     render(
       <CurrencyInput
-        currency="USD"
+        currency='USD'
         defaultValue={1.23}
         min={-1.23}
         max={1.23}
@@ -219,14 +196,12 @@ describe('CurrencyInput public API', () => {
 
   it('keeps rapid controlled updates authoritative and suppresses formatting-only callbacks', () => {
     const onValueChange = vi.fn();
-    const { rerender } = render(
-      <CurrencyInput currency="USD" value={1.2} onValueChange={onValueChange} />,
-    );
+    const { rerender } = render(<CurrencyInput currency='USD' value={1.2} onValueChange={onValueChange} />);
     const input = screen.getByRole('textbox');
 
-    rerender(<CurrencyInput currency="USD" value={2.3} onValueChange={onValueChange} />);
-    rerender(<CurrencyInput currency="EUR" locale="de-DE" value={2.3} onValueChange={onValueChange} />);
-    rerender(<CurrencyInput currency="USD" value={3.4} onValueChange={onValueChange} />);
+    rerender(<CurrencyInput currency='USD' value={2.3} onValueChange={onValueChange} />);
+    rerender(<CurrencyInput currency='EUR' locale='de-DE' value={2.3} onValueChange={onValueChange} />);
+    rerender(<CurrencyInput currency='USD' value={3.4} onValueChange={onValueChange} />);
 
     expect(input).toHaveValue('$3.40');
     expect(onValueChange).not.toHaveBeenCalled();
@@ -235,14 +210,7 @@ describe('CurrencyInput public API', () => {
   it('rejects edits outside min/max without invoking either callback', () => {
     const onChange = vi.fn();
     const onValueChange = vi.fn();
-    render(
-      <CurrencyInput
-        currency="USD"
-        max={10}
-        onChange={onChange}
-        onValueChange={onValueChange}
-      />,
-    );
+    render(<CurrencyInput currency='USD' max={10} onChange={onChange} onValueChange={onValueChange} />);
 
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '1001' } });
 
@@ -253,7 +221,7 @@ describe('CurrencyInput public API', () => {
 
   it('uses exact minor-unit limits before converting a very large rejected digit stream', () => {
     const onValueChange = vi.fn();
-    render(<CurrencyInput currency="USD" max={1_000_000_000_000_000} onValueChange={onValueChange} />);
+    render(<CurrencyInput currency='USD' max={1_000_000_000_000_000} onValueChange={onValueChange} />);
 
     fireEvent.change(screen.getByRole('textbox'), {
       target: { value: '100000000000000001' },
@@ -264,8 +232,6 @@ describe('CurrencyInput public API', () => {
   });
 
   it('rejects an inverted limit configuration', () => {
-    expect(() => render(<CurrencyInput currency="USD" min={10} max={1} />)).toThrow(
-      /min must not exceed max/i,
-    );
+    expect(() => render(<CurrencyInput currency='USD' min={10} max={1} />)).toThrow(/min must not exceed max/i);
   });
 });

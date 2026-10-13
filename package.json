@@ -19,7 +19,7 @@
   "scripts": {
     "start:app": "vite app --port 3000 --host 0.0.0.0 --open",
     "typecheck": "tsc --noEmit && tsc --project tsconfig.node.json --noEmit",
-    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint app lib test --ext .ts,.tsx",
+    "lint": "biome check app lib test",
     "preview:app": "vite preview app --outDir $PWD/dist/app --port 3000 --host 0.0.0.0 --open",
     "build:all": "npm run build:lib && npm run build:app",
     "test:unit": "vitest run",
@@ -34,33 +34,24 @@
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
-  "dependencies": {
-    "big.js": "6.2.2"
-  },
   "peerDependencies": {
     "react": ">=18.2.0 <20",
     "react-dom": ">=18.2.0 <20"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.15",
     "@playwright/test": "^1.64.0",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "14.3.1",
     "@testing-library/user-event": "14.6.7",
-    "@types/big.js": "6.2.2",
     "@types/node": "24.19.2",
     "@types/react": "18.3.31",
     "@types/react-dom": "18.3.7",
-    "@types/react-syntax-highlighter": "15.5.13",
-    "@typescript-eslint/eslint-plugin": "8.71.2",
-    "@typescript-eslint/parser": "8.71.2",
     "@vitejs/plugin-react": "5.2.0",
     "@vitest/coverage-v8": "4.1.11",
-    "eslint": "9.39.5",
-    "eslint-plugin-react": "7.37.5",
     "jsdom": "21.1.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-syntax-highlighter": "16.1.2",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
     "vite": "7.3.6",

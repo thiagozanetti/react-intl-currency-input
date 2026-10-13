@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import packageJson from '../../package.json';
 
@@ -37,23 +37,34 @@ describe('modern tooling configuration', () => {
     expect(config).toMatch(/name:\s*['"]webkit['"]/);
   });
 
+  it('uses native numeric handling without a big.js dependency', () => {
+    const formatter = readFileSync(resolve(root, 'lib/format-currency.ts'), 'utf8');
+
+    expect(packageJson.dependencies ?? {}).not.toHaveProperty('big.js');
+    expect(packageJson.devDependencies).not.toHaveProperty('@types/big.js');
+    expect(formatter).not.toContain("from 'big.js'");
+  });
+
+  it('uses native code rendering without a syntax-highlighter dependency', () => {
+    const app = readFileSync(resolve(root, 'app/App.tsx'), 'utf8');
+
+    expect(packageJson.devDependencies).not.toHaveProperty('react-syntax-highlighter');
+    expect(packageJson.devDependencies).not.toHaveProperty('@types/react-syntax-highlighter');
+    expect(app).not.toContain('react-syntax-highlighter');
+    expect(app).toMatch(/<pre>\s*<code>/);
+  });
+
   it('keeps the release workflow and lint toolchain modern and substantive', () => {
-    const workflow = readFileSync(
-      resolve(root, '.github/workflows/release.yml'),
-      'utf8',
-    );
-    const eslintConfig = readFileSync(resolve(root, '.eslintrc.cjs'), 'utf8');
+    const workflow = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
+    const biomeConfig = readFileSync(resolve(root, 'biome.json'), 'utf8');
 
     expect(workflow).toContain('actions/download-artifact@v4');
-    expect(eslintConfig).toContain('root: true');
-    expect(eslintConfig).toContain("'eslint:recommended'");
-    expect(eslintConfig).toContain("'plugin:@typescript-eslint/recommended'");
-    expect(eslintConfig).toContain("'plugin:react/recommended'");
+    expect(packageJson.scripts.lint).toContain('biome check');
+    expect(biomeConfig).toContain('"organizeImports"');
+    expect(biomeConfig).toContain('"recommended": true');
     expect(packageJson.devDependencies).toEqual(
       expect.objectContaining({
-        '@typescript-eslint/eslint-plugin': expect.stringMatching(/^\^?8\./),
-        '@typescript-eslint/parser': expect.stringMatching(/^\^?8\./),
-        eslint: expect.stringMatching(/^\^?9\./),
+        '@biomejs/biome': expect.stringMatching(/^\^?2\./),
         typescript: expect.stringMatching(/^\^?5\.9\./),
         vite: expect.stringMatching(/^\^?7\./),
         vitest: expect.stringMatching(/^\^?4\./),
@@ -61,5 +72,9 @@ describe('modern tooling configuration', () => {
         tsup: expect.stringMatching(/^\^?8\./),
       }),
     );
+    expect(packageJson.devDependencies).not.toHaveProperty('eslint');
+    expect(packageJson.devDependencies).not.toHaveProperty('@typescript-eslint/eslint-plugin');
+    expect(packageJson.devDependencies).not.toHaveProperty('@typescript-eslint/parser');
+    expect(packageJson.devDependencies).not.toHaveProperty('eslint-plugin-react');
   });
 });

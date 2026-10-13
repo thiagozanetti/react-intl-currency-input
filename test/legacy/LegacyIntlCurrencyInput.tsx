@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState, type Ref } from 'react';
 import type React from 'react';
+import { type Ref, useEffect, useMemo, useRef, useState } from 'react';
 
 import formatCurrency from '../../lib/format-currency';
 import type { IntlCurrencyInputProps, IntlFormatterConfig } from '../../lib/types';
@@ -63,10 +63,13 @@ function LegacyIntlCurrencyInput({
   const normalizeValue = (entry: string | number): number => {
     const maximumFractionDigits = safeConfig.formats.number[currency].maximumFractionDigits ?? 2;
     const clean = typeof entry === 'number' ? entry : Number(entry.replace(/[^0-9-]/g, '')) || 0;
-    const scaled = typeof entry === 'number'
-      ? (Number.isInteger(clean) ? clean * (10 ** maximumFractionDigits) : clean.toFixed(maximumFractionDigits))
-      : clean;
-    return Number(String(scaled).replace(/[^0-9-]/g, '')) / (10 ** maximumFractionDigits);
+    const scaled =
+      typeof entry === 'number'
+        ? Number.isInteger(clean)
+          ? clean * 10 ** maximumFractionDigits
+          : clean.toFixed(maximumFractionDigits)
+        : clean;
+    return Number(String(scaled).replace(/[^0-9-]/g, '')) / 10 ** maximumFractionDigits;
   };
 
   const calculate = (entry: string | number): [number, string] => {

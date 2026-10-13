@@ -54,14 +54,10 @@ describe('release automation contract', () => {
     expect(workflow).toContain('actions/download-artifact@v4');
     expect(workflow).toContain('buildCommand');
     expect(workflow).toContain('outputDirectory');
-    expect(workflow).toContain(
-      'vercel@latest pull --yes --environment=production',
-    );
+    expect(workflow).toContain('vercel@latest pull --yes --environment=production');
     expect(workflow).toContain('vercel@latest build --prod');
     expect(workflow).toContain('gh issue list --repo "$REPOSITORY"');
-    expect(workflow).toContain(
-      'gh issue comment "$issue" --repo "$REPOSITORY"',
-    );
+    expect(workflow).toContain('gh issue comment "$issue" --repo "$REPOSITORY"');
     expect(workflow).toContain('gh issue create --repo "$REPOSITORY"');
     expect(workflow).toContain('vercel@latest deploy --prebuilt --prod --yes');
     expect(workflow).toContain('GITHUB_STEP_SUMMARY');
@@ -89,8 +85,6 @@ describe('release automation contract', () => {
     expect(agents).toMatch(/only\s+a\s+published GitHub Release triggers CD/i);
     expect(agents).toContain('must not create or push tags');
     expect(agents).toMatch(/release tags must match `package\.json`/i);
-    expect(readme).not.toMatch(
-      /does not publish to npm|create an external release|push a tag/i,
-    );
+    expect(readme).not.toMatch(/does not publish to npm|create an external release|push a tag/i);
   });
 });

@@ -1,17 +1,17 @@
 import {
+  type ChangeEvent,
+  type ChangeEventHandler,
+  type ClipboardEvent,
   forwardRef,
+  type KeyboardEvent,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type ChangeEvent,
-  type ChangeEventHandler,
-  type ClipboardEvent,
-  type KeyboardEvent,
 } from 'react';
 
-import { decimalToMinorUnits, decimalStringToNumber, minorUnitsToDecimal } from './currency-decimal';
+import { decimalStringToNumber, decimalToMinorUnits, minorUnitsToDecimal } from './currency-decimal';
 import formatCurrency, { resolveCurrencyFormatOptions } from './format-currency';
 import { normalizeCurrencyValue, sanitizeDigitStream } from './normalize-currency-value';
 import type { CurrencyInputProps } from './types';
@@ -71,12 +71,10 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
   }));
   const wasControlled = useRef(isControlled);
   const transitionedToUncontrolled = !isControlled && wasControlled.current;
-  const uncontrolledMinorUnits = uncontrolledState.scale === scale
-    ? uncontrolledState.minorUnits
-    : decimalToMinorUnits(
-      minorUnitsToDecimal(uncontrolledState.minorUnits, uncontrolledState.scale),
-      scale,
-    );
+  const uncontrolledMinorUnits =
+    uncontrolledState.scale === scale
+      ? uncontrolledState.minorUnits
+      : decimalToMinorUnits(minorUnitsToDecimal(uncontrolledState.minorUnits, uncontrolledState.scale), scale);
 
   const propMinorUnits = valueToMinorUnits(value, scale);
   const minMinorUnits = min === undefined ? undefined : decimalToMinorUnits(min, scale);
@@ -88,8 +86,9 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
       : uncontrolledMinorUnits;
   const currentValue = displayValue(currentMinorUnits, scale);
   const formattedValue = formatCurrency(currentValue, locale, currency, resolvedOptions);
-  const outOfRange = (minMinorUnits !== undefined && currentMinorUnits < minMinorUnits)
-    || (maxMinorUnits !== undefined && currentMinorUnits > maxMinorUnits);
+  const outOfRange =
+    (minMinorUnits !== undefined && currentMinorUnits < minMinorUnits) ||
+    (maxMinorUnits !== undefined && currentMinorUnits > maxMinorUnits);
   const latestFormattedValue = useRef(formattedValue);
   const nativeChangeInFlight = useRef(false);
   latestFormattedValue.current = formattedValue;
@@ -106,9 +105,11 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
   }, [defaultValue, isControlled, propMinorUnits, scale, transitionedToUncontrolled]);
 
   useEffect(() => {
-    const runtimeProcess = (globalThis as typeof globalThis & {
-      process?: { env?: { NODE_ENV?: string } };
-    }).process;
+    const runtimeProcess = (
+      globalThis as typeof globalThis & {
+        process?: { env?: { NODE_ENV?: string } };
+      }
+    ).process;
     if (runtimeProcess?.env?.NODE_ENV !== 'production' && isControlled && outOfRange) {
       console.warn('CurrencyInput controlled value is outside the inclusive min/max range.');
     }
@@ -120,12 +121,11 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
     else if (forwardedRef) forwardedRef.current = element;
   };
 
-  const commit = (
-    nextMinorUnits: bigint,
-    event?: ChangeEvent<HTMLInputElement>,
-  ) => {
-    if ((minMinorUnits !== undefined && nextMinorUnits < minMinorUnits)
-      || (maxMinorUnits !== undefined && nextMinorUnits > maxMinorUnits)) {
+  const commit = (nextMinorUnits: bigint, event?: ChangeEvent<HTMLInputElement>) => {
+    if (
+      (minMinorUnits !== undefined && nextMinorUnits < minMinorUnits) ||
+      (maxMinorUnits !== undefined && nextMinorUnits > maxMinorUnits)
+    ) {
       if (inputRef.current) inputRef.current.value = formattedValue;
       setCaretToEnd(inputRef.current);
       return;
@@ -186,7 +186,7 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
       nextMinorUnits = -nextMinorUnits;
     } else {
       const sign = nextMinorUnits < 0n ? -1n : 1n;
-      nextMinorUnits = (nextMinorUnits < 0n ? -nextMinorUnits : nextMinorUnits) / 10n * sign;
+      nextMinorUnits = ((nextMinorUnits < 0n ? -nextMinorUnits : nextMinorUnits) / 10n) * sign;
     }
     commit(nextMinorUnits);
     onKeyDown?.(event);
@@ -205,7 +205,7 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function 
     <input
       {...inputProps}
       ref={assignRef}
-      type="text"
+      type='text'
       inputMode={inputMode}
       value={formattedValue}
       aria-invalid={outOfRange ? true : inputProps['aria-invalid']}
