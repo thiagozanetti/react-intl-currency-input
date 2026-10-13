@@ -90,8 +90,8 @@ For each batch: update one related group, run the cheap checks, inspect the diff
 
 - [x] Evaluate and adopt the current supported Vite and `@vitejs/plugin-react` majors as one compatibility group; Vite `8.3.4` and plugin `6.1.2` passed the build, package, fixture, unit, coverage, and Chromium/Firefox checks.
 - [x] Evaluate and adopt Vitest 5.0.4 and `@vitest/coverage-v8` 5.0.4 together; unit tests, coverage, package checks, and fixtures passed with the existing thresholds and ordered validation.
-- [ ] Evaluate TypeScript only after the Vite/Vitest toolchain is stable; treat compiler diagnostics as a separate review.
-- [ ] Record any incompatibility as a follow-up rather than combining unrelated source changes.
+- [x] Evaluate TypeScript 7.0.2 after the Vite/Vitest toolchain stabilized; typechecking passed, but `tsup` 8.5.1 declaration bundling crashed under TypeScript 7, so TypeScript 5.9.3 remains the compatible release version.
+- [x] Record the TypeScript 7 and `tsup` incompatibility as a follow-up rather than combining unrelated source changes.
 
 **Exit criteria:** Typecheck, library/example builds, unit tests, coverage, packed-package checks, and fixtures pass.
 
@@ -166,6 +166,7 @@ Fixture install audits may report vulnerabilities inherited from the Next.js or 
 - Chromium and Firefox browser suites passed.
 - WebKit is currently blocked locally by missing host libraries (`libicudata.so.70`, `libicui18n.so.70`, `libicuuc.so.70`, and `libavif.so.13`); CI remains authoritative for that project until the host is repaired.
 - The Vitest 5.0.4 and `@vitest/coverage-v8` 5.0.4 batch is implemented; the current worktree is still uncommitted and unpushed until this topic commit is created.
+- TypeScript 7.0.2 was evaluated separately; its compiler diagnostics were clean after config migration, but the existing `tsup` declaration build is incompatible, so adoption is deferred with the bundler review.
 
 ## Completion evidence
 

@@ -79,6 +79,10 @@ describe('modern tooling configuration', () => {
     );
   });
 
+  it('keeps TypeScript on the current supported compatible major', () => {
+    expect(packageJson.devDependencies.typescript).toMatch(/^\^?5\.9\./);
+  });
+
   it('keeps Vitest and coverage tooling on their compatible supported majors', () => {
     expect(packageJson.devDependencies).toEqual(
       expect.objectContaining({
