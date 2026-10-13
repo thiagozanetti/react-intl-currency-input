@@ -25,6 +25,8 @@ The stable release of the modern React currency input API.
 - Backspace/Delete remove the rightmost digit and `-` toggles the sign.
 - Accepted edits call native `onChange` before `onValueChange`; rejected limit edits call neither callback.
 - Locale, currency, and formatting changes reformat without value callbacks.
+- Internal decimal formatting now uses native `BigInt` arithmetic and `Intl.NumberFormat` without a `big.js` runtime dependency.
+- Development validation now uses Biome and covers React 18 and React 19 consumer environments with the modern React testing platform.
 
 ### Removed
 
