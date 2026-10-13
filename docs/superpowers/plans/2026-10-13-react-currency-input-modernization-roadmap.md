@@ -97,9 +97,9 @@ For each batch: update one related group, run the cheap checks, inspect the diff
 
 #### 3.3 Browser automation
 
-- [ ] Evaluate the current supported Playwright major independently.
-- [ ] Install and verify Chromium, Firefox, and WebKit binaries before relying on local browser results.
-- [ ] Re-run interaction, accessibility, and visual suites after the upgrade.
+- [x] Evaluate the current supported Playwright major independently; Playwright 1.64.0 is current for this dependency.
+- [x] Install and verify Chromium 1248, Firefox 1555, and WebKit 2370 binaries before relying on local browser results.
+- [x] Re-run interaction, accessibility, and visual suites; Chromium and Firefox passed locally, while WebKit is blocked by documented host libraries.
 
 **Exit criteria:** All three browser projects pass locally or the exact host limitation is documented while CI supplies authoritative WebKit evidence.
 
@@ -169,6 +169,7 @@ Fixture install audits may report vulnerabilities inherited from the Next.js or 
 - TypeScript 7.0.2 was evaluated separately; its compiler diagnostics were clean after config migration, but the existing `tsup` declaration build is incompatible, so adoption is deferred with the bundler review.
 - The tsdown 0.23.1 batch replaces tsup for library output; Vite remains the application bundler, and Vite Library Mode was not selected because it requires a separate declaration-bundling strategy.
 - The current tsdown worktree changes are still uncommitted and unpushed; CI and release status must be revalidated after committing and pushing.
+- Playwright browser binaries are installed locally; Chromium and Firefox pass, while WebKit remains CI-authoritative because the host cannot install its required legacy ICU, libffi, and AVIF libraries.
 
 ## Completion evidence
 
