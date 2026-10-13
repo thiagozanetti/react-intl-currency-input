@@ -29,6 +29,7 @@ The stable release of the modern React currency input API.
 - Development validation now uses Biome and covers React 18 and React 19 consumer environments with the modern React testing platform.
 - The browser-emulation test environment now uses `jsdom` 30.1.2.
 - The application and fixture build tooling now uses Vite 8.3.4 with `@vitejs/plugin-react` 6.1.2.
+- Unit tests and coverage now use Vitest 5.0.4 with `@vitest/coverage-v8` 5.0.4.
 
 ### Removed
 

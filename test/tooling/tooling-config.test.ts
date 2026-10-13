@@ -79,6 +79,15 @@ describe('modern tooling configuration', () => {
     );
   });
 
+  it('keeps Vitest and coverage tooling on their compatible supported majors', () => {
+    expect(packageJson.devDependencies).toEqual(
+      expect.objectContaining({
+        '@vitest/coverage-v8': expect.stringMatching(/^\^?5\./),
+        vitest: expect.stringMatching(/^\^?5\./),
+      }),
+    );
+  });
+
   it('keeps the release workflow and lint toolchain modern and substantive', () => {
     const workflow = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
     const biomeConfig = readFileSync(resolve(root, 'biome.json'), 'utf8');
@@ -92,7 +101,7 @@ describe('modern tooling configuration', () => {
         '@biomejs/biome': expect.stringMatching(/^\^?2\./),
         typescript: expect.stringMatching(/^\^?5\.9\./),
         vite: expect.stringMatching(/^\^?8\./),
-        vitest: expect.stringMatching(/^\^?4\./),
+        vitest: expect.stringMatching(/^\^?5\./),
         '@vitejs/plugin-react': expect.stringMatching(/^\^?6\./),
         tsup: expect.stringMatching(/^\^?8\./),
       }),
