@@ -179,7 +179,7 @@ jobs:
         run: |
           mkdir -p .vercel
           tar -xzf release-artifacts/vercel-output.tgz
-          deployment_url=$(npx vercel@latest deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}")
+          deployment_url=$(npx vercel@latest deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN }}")
           echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
       - name: Record deployment evidence
         if: always()

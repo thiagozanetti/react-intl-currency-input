@@ -63,7 +63,7 @@ describe('release automation contract', () => {
       'gh issue comment "$issue" --repo "$REPOSITORY"',
     );
     expect(workflow).toContain('gh issue create --repo "$REPOSITORY"');
-    expect(workflow).toMatch(/vercel(?:@latest)? deploy --prebuilt/);
+    expect(workflow).toContain('vercel@latest deploy --prebuilt --prod --yes');
     expect(workflow).toContain('GITHUB_STEP_SUMMARY');
     expect(workflow).toContain('release_commit');
     expect(workflow).toContain('sha256sum');
