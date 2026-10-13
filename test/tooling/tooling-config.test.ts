@@ -66,6 +66,10 @@ describe('modern tooling configuration', () => {
     );
   });
 
+  it('keeps jsdom on the current supported browser-emulation major', () => {
+    expect(packageJson.devDependencies.jsdom).toMatch(/^\^?30\./);
+  });
+
   it('keeps the release workflow and lint toolchain modern and substantive', () => {
     const workflow = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
     const biomeConfig = readFileSync(resolve(root, 'biome.json'), 'utf8');

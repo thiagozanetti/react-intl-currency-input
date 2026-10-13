@@ -27,6 +27,7 @@ The stable release of the modern React currency input API.
 - Locale, currency, and formatting changes reformat without value callbacks.
 - Internal decimal formatting now uses native `BigInt` arithmetic and `Intl.NumberFormat` without a `big.js` runtime dependency.
 - Development validation now uses Biome and covers React 18 and React 19 consumer environments with the modern React testing platform.
+- The browser-emulation test environment now uses `jsdom` 30.1.2.
 
 ### Removed
 

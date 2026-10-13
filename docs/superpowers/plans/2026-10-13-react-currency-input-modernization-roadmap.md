@@ -82,7 +82,7 @@ For each batch: update one related group, run the cheap checks, inspect the diff
 - [x] Evaluate the current supported React 19, React DOM, React type, and Testing Library majors; user-event remains unchanged for a separate review.
 - [x] Keep the React 18 fixture and peer compatibility checks while adding or retaining React 19 coverage.
 - [x] Evaluate and adopt the Testing Library 16 migration, including its explicit `@testing-library/dom` peer dependency.
-- [ ] Update jsdom separately from Testing Library if its browser-emulation behavior changes.
+- [x] Update jsdom separately from Testing Library; `30.1.2` passed the component, accessibility, SSR, package, and fixture checks without behavior regressions.
 
 **Exit criteria:** Component, accessibility, SSR, React 18/19, and fixture checks pass with no callback or DOM contract regressions.
 
@@ -161,6 +161,7 @@ Fixture install audits may report vulnerabilities inherited from the Next.js or 
 
 - The native dependency cleanup and Biome migration are implemented in the current worktree.
 - The React 19.3 and Testing Library React 16.3 batch is implemented and its React 18/19 fixture matrix passes.
+- The jsdom 30.1.2 batch is implemented and the full unit/coverage suites remain green.
 - Root audit, lint, typecheck, documentation checks, builds, package checks, fixtures, unit tests, and coverage have passed.
 - Chromium and Firefox browser suites passed.
 - WebKit is currently blocked locally by missing host libraries (`libicudata.so.70`, `libicui18n.so.70`, `libicuuc.so.70`, and `libavif.so.13`); CI remains authoritative for that project until the host is repaired.
