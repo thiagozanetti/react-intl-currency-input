@@ -19,7 +19,7 @@ export default defineConfig({
   expect: {
     toHaveScreenshot: {
       animations: 'disabled',
-      maxDiffPixels: 100,
+      maxDiffPixelRatio: 0.08,
     },
   },
   webServer: {

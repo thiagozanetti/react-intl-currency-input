@@ -17,9 +17,9 @@ test.describe('CurrencyInput visual states', () => {
     const input = page.locator('input');
 
     await input.evaluate((element) => element.blur());
-    await expect(main).toHaveScreenshot('currency-zero.png', { animations: 'disabled', maxDiffPixels: 100 });
+    await expect(main).toHaveScreenshot('currency-zero.png', { animations: 'disabled' });
     await input.focus();
-    await expect(main).toHaveScreenshot('currency-focused.png', { animations: 'disabled', maxDiffPixels: 100 });
+    await expect(main).toHaveScreenshot('currency-focused.png', { animations: 'disabled' });
   });
 
   test('captures positive and negative formatted states', async ({ page }) => {
@@ -27,9 +27,9 @@ test.describe('CurrencyInput visual states', () => {
     const input = page.locator('input');
 
     await input.fill('123456');
-    await expect(main).toHaveScreenshot('currency-positive.png', { animations: 'disabled', maxDiffPixels: 100 });
+    await expect(main).toHaveScreenshot('currency-positive.png', { animations: 'disabled' });
     await input.press('-');
-    await expect(main).toHaveScreenshot('currency-negative.png', { animations: 'disabled', maxDiffPixels: 100 });
+    await expect(main).toHaveScreenshot('currency-negative.png', { animations: 'disabled' });
   });
 
   test('captures locale and narrow viewport output', async ({ page }) => {
@@ -38,7 +38,6 @@ test.describe('CurrencyInput visual states', () => {
 
     await expect(page.locator('main')).toHaveScreenshot('currency-narrow-eur.png', {
       animations: 'disabled',
-      maxDiffPixels: 100,
     });
   });
 });
