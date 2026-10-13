@@ -249,11 +249,11 @@ export type IntlCurrencyInputProps = React.PropsWithChildren & {
   autoFocus: boolean;
   autoSelect: boolean;
   autoReset: boolean;
-  onChange: (...args: any[]) => void;
-  onBlur: (...args: any[]) => void;
-  onFocus: (...args: any[]) => void;
-  onKeyPress: (...args: any[]) => void;
-  inputRef: null | ((...args: any[]) => any) | Record<string, any>;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>, value: number, maskedValue: string) => void;
+  onBlur: (event: React.FocusEvent<HTMLInputElement>, value: number, maskedValue: string) => void;
+  onFocus: (event: React.FocusEvent<HTMLInputElement>, value: number, maskedValue: string) => void;
+  onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>, key: string, keyCode: number) => void;
+  inputRef: React.Ref<HTMLInputElement>;
 };
 
 export interface CurrencyInputProps

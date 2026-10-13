@@ -32,6 +32,7 @@ The stable release of the modern React currency input API.
 - Unit tests and coverage now use Vitest 5.0.4 with `@vitest/coverage-v8` 5.0.4.
 - Library output now uses tsdown 0.23.1 for ESM, CommonJS, and declaration artifacts; Vite remains responsible for the application build.
 - Generated application output now uses a portable Node cleanup script instead of shell-specific recursive removal.
+- Biome now enforces type-only imports and rejects explicit `any` in the checked source, test, script, and configuration files.
 
 ### Removed
 

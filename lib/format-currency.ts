@@ -1,4 +1,4 @@
-import { IntlFormatterConfig } from './types';
+import type { IntlFormatterConfig } from './types';
 
 export function resolveCurrencyFormatOptions(
   locale: string,

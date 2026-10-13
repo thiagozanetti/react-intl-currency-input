@@ -109,7 +109,7 @@ For each batch: update one related group, run the cheap checks, inspect the diff
 - [x] Switch the library bundler to tsdown 0.23.1; the packed tarball, exports map, declarations, SSR imports, and fixtures remain equivalent.
 - [x] Replace shell-specific `rm -rf` package scripts with a portable Node cleanup script where practical.
 - [x] Keep generated artifacts out of the repository and verify clean worktrees after validation.
-- [ ] Revisit Biome rule exceptions one at a time; enable stronger rules only with behavior-focused tests.
+- [x] Revisit Biome rule exceptions one at a time; enable `style/useImportType` and `suspicious/noExplicitAny` after focused tooling checks. Keep `a11y/useAriaPropsSupportedByRole`, `correctness/useExhaustiveDependencies`, and `style/noNonNullAssertion` disabled because the current findings are respectively an example markup decision, legacy-only hook behavior, and test/fixture assertions requiring separate behavior review.
 
 **Exit criteria:** The package artifact is equivalent or demonstrably improved, and the toolchain works on supported developer and CI environments.
 
@@ -168,9 +168,10 @@ Fixture install audits may report vulnerabilities inherited from the Next.js or 
 - The Vitest 5.0.4 and `@vitest/coverage-v8` 5.0.4 batch is implemented.
 - TypeScript 7.0.2 was evaluated separately; its compiler diagnostics were clean after config migration, but the existing `tsup` declaration build is incompatible, so adoption is deferred with the bundler review.
 - The tsdown 0.23.1 batch replaces tsup for library output; Vite remains the application bundler, and Vite Library Mode was not selected because it requires a separate declaration-bundling strategy.
-- The current tsdown worktree changes are still uncommitted and unpushed; CI and release status must be revalidated after committing and pushing.
+- The tsdown and portable-cleanup batches are committed locally but remain unpushed; CI and release status must be revalidated after an authorized push.
 - Playwright browser binaries are installed locally; Chromium and Firefox pass, while WebKit remains CI-authoritative because the host cannot install its required legacy ICU, libffi, and AVIF libraries.
 - Generated application output now uses `scripts/clean.mjs`; cleanup, package checks, fixtures, unit tests, coverage, Chromium, and Firefox validation passed.
+- Biome now enforces type-only imports and rejects explicit `any`; the remaining exceptions are tracked for separate behavior-focused review.
 
 ## Completion evidence
 

@@ -43,11 +43,11 @@
         "useExhaustiveDependencies": "off"
       },
       "style": {
-        "useImportType": "off",
+        "useImportType": "error",
         "noNonNullAssertion": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "error"
       }
     }
   }

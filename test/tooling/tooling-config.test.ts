@@ -111,6 +111,8 @@ describe('modern tooling configuration', () => {
     expect(packageJson.scripts.lint).toContain('biome check');
     expect(biomeConfig).toContain('"organizeImports"');
     expect(biomeConfig).toContain('"recommended": true');
+    expect(biomeConfig).toContain('"useImportType": "error"');
+    expect(biomeConfig).toContain('"noExplicitAny": "error"');
     expect(packageJson.devDependencies).toEqual(
       expect.objectContaining({
         '@biomejs/biome': expect.stringMatching(/^\^?2\./),

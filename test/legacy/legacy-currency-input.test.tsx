@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { forwardRef, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { IntlFormatterConfig } from '../../lib/types';
+import type { IntlFormatterConfig } from '../../lib/types';
 import IntlCurrencyInput from './LegacyIntlCurrencyInput';
 
 const usdConfig: IntlFormatterConfig = {
