@@ -62,6 +62,15 @@ jobs:
           sha256sum release-artifacts/npm/*.tgz > release-artifacts/npm.sha256
       - name: Build immutable Vercel artifact
         run: |
+          if [ ! -f vercel.json ]; then
+            cat > vercel.json <<'EOF'
+          {
+            "framework": "vite",
+            "buildCommand": "npm run build:app",
+            "outputDirectory": "dist/app"
+          }
+          EOF
+          fi
           npx vercel@latest pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
           npx vercel@latest build --prod --token="${{ secrets.VERCEL_TOKEN }}"
           tar -czf release-artifacts/vercel-output.tgz .vercel/output
@@ -179,13 +188,14 @@ jobs:
       - name: Create or update release failure issue
         env:
           GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
           TAG: ${{ github.event.release.tag_name }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           title="Release failure: $TAG"
-          issue=$(gh issue list --state open --search "${title} in:title" --json number --jq '.[0].number')
+          issue=$(gh issue list --repo "$REPOSITORY" --state open --search "${title} in:title" --json number --jq '.[0].number')
           if [ -n "$issue" ]; then
-            gh issue comment "$issue" --body "Retry failed for [$TAG]($RUN_URL)."
+            gh issue comment "$issue" --repo "$REPOSITORY" --body "Retry failed for [$TAG]($RUN_URL)."
           else
-            gh issue create --title "$title" --body "The automated release for [$TAG]($RUN_URL) failed. Check the run evidence and retry the independently idempotent promotion jobs."
+            gh issue create --repo "$REPOSITORY" --title "$title" --body "The automated release for [$TAG]($RUN_URL) failed. Check the run evidence and retry the independently idempotent promotion jobs."
           fi
