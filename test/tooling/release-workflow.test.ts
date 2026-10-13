@@ -48,9 +48,10 @@ describe('release automation contract', () => {
     expect(workflow).toContain('id-token: write');
     expect(workflow).toContain('actions/upload-artifact@v4');
     expect(workflow).toContain('actions/download-artifact@v4');
+    expect(workflow).toContain('buildCommand');
+    expect(workflow).toContain('outputDirectory');
     expect(workflow).toContain('vercel@latest pull --yes --environment=production');
     expect(workflow).toContain('vercel@latest build --prod');
-    expect(workflow).toContain('--cwd app');
     expect(workflow).toContain('gh issue list --repo "$REPOSITORY"');
     expect(workflow).toContain('gh issue comment "$issue" --repo "$REPOSITORY"');
     expect(workflow).toContain('gh issue create --repo "$REPOSITORY"');
@@ -60,6 +61,17 @@ describe('release automation contract', () => {
     expect(workflow).toContain('sha256sum');
     expect(workflow).toContain('gh issue');
     expect(workflow).toContain('if: always()');
+
+    const vercelConfig = JSON.parse(read('vercel.json')) as {
+      buildCommand?: string;
+      outputDirectory?: string;
+    };
+    expect(vercelConfig).toEqual(
+      expect.objectContaining({
+        buildCommand: 'npm run build:app',
+        outputDirectory: 'dist/app',
+      }),
+    );
   });
 
   it('keeps internal release safeguards in agent guidance, not the README', () => {

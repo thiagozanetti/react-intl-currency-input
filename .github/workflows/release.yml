@@ -62,9 +62,18 @@ jobs:
           sha256sum release-artifacts/npm/*.tgz > release-artifacts/npm.sha256
       - name: Build immutable Vercel artifact
         run: |
-          npx vercel@latest pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}" --cwd app
-          npx vercel@latest build --prod --token="${{ secrets.VERCEL_TOKEN }}" --cwd app
-          tar -czf release-artifacts/vercel-output.tgz -C app .vercel/output
+          if [ ! -f vercel.json ]; then
+            cat > vercel.json <<'EOF'
+          {
+            "framework": "vite",
+            "buildCommand": "npm run build:app",
+            "outputDirectory": "dist/app"
+          }
+          EOF
+          fi
+          npx vercel@latest pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+          npx vercel@latest build --prod --token="${{ secrets.VERCEL_TOKEN }}"
+          tar -czf release-artifacts/vercel-output.tgz .vercel/output
           sha256sum release-artifacts/vercel-output.tgz > release-artifacts/vercel.sha256
       - name: Write release evidence
         run: |
