@@ -88,6 +88,12 @@ describe('modern tooling configuration', () => {
     expect(packageJson.devDependencies.tsdown).toMatch(/^\^?0\.23\./);
   });
 
+  it('uses a portable cleanup script for generated application output', () => {
+    expect(packageJson.scripts['build:app']).toContain('scripts/clean.mjs');
+    expect(packageJson.scripts['build:app']).not.toContain('rm -rf');
+    expect(readFileSync(resolve(root, 'scripts/clean.mjs'), 'utf8')).toContain("from 'node:fs/promises'");
+  });
+
   it('keeps Vitest and coverage tooling on their compatible supported majors', () => {
     expect(packageJson.devDependencies).toEqual(
       expect.objectContaining({

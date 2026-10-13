@@ -107,8 +107,8 @@ For each batch: update one related group, run the cheap checks, inspect the diff
 
 - [x] Compare the existing tsup output with Vite Library Mode and `tsdown` against the ESM/CJS/declaration/SSR contract; Vite required a separate declaration strategy, while tsdown produced the required artifact set directly.
 - [x] Switch the library bundler to tsdown 0.23.1; the packed tarball, exports map, declarations, SSR imports, and fixtures remain equivalent.
-- [ ] Replace shell-specific `rm -rf` package scripts with a portable Node cleanup script where practical.
-- [ ] Keep generated artifacts out of the repository and verify clean worktrees after validation.
+- [x] Replace shell-specific `rm -rf` package scripts with a portable Node cleanup script where practical.
+- [x] Keep generated artifacts out of the repository and verify clean worktrees after validation.
 - [ ] Revisit Biome rule exceptions one at a time; enable stronger rules only with behavior-focused tests.
 
 **Exit criteria:** The package artifact is equivalent or demonstrably improved, and the toolchain works on supported developer and CI environments.
@@ -170,6 +170,7 @@ Fixture install audits may report vulnerabilities inherited from the Next.js or 
 - The tsdown 0.23.1 batch replaces tsup for library output; Vite remains the application bundler, and Vite Library Mode was not selected because it requires a separate declaration-bundling strategy.
 - The current tsdown worktree changes are still uncommitted and unpushed; CI and release status must be revalidated after committing and pushing.
 - Playwright browser binaries are installed locally; Chromium and Firefox pass, while WebKit remains CI-authoritative because the host cannot install its required legacy ICU, libffi, and AVIF libraries.
+- Generated application output now uses `scripts/clean.mjs`; cleanup, package checks, fixtures, unit tests, coverage, Chromium, and Firefox validation passed.
 
 ## Completion evidence
 
