@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import formatCurrency, {
-  resolveCurrencyFormatOptions,
-} from '../../lib/format-currency';
+import formatCurrency, { resolveCurrencyFormatOptions } from '../../lib/format-currency';
 
 describe('modern currency formatting', () => {
   it('uses currency defaults and requires the currency argument', () => {
@@ -29,9 +27,7 @@ describe('modern currency formatting', () => {
       }),
     );
     expect(formatCurrency(1, 'en-US', 'USD', { maximumFractionDigits: 0 })).toBe('$1');
-    expect(formatCurrency(1, 'en-US', 'USD', { minimumFractionDigits: 0, maximumFractionDigits: 0 })).toBe(
-      '$1',
-    );
+    expect(formatCurrency(1, 'en-US', 'USD', { minimumFractionDigits: 0, maximumFractionDigits: 0 })).toBe('$1');
     expect(() => formatCurrency(1, 'en-US', 'USD', { minimumFractionDigits: 3, maximumFractionDigits: 2 })).toThrow(
       /fraction digits/i,
     );

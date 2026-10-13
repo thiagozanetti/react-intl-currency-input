@@ -1,13 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import javascript from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
-import railcasts from 'react-syntax-highlighter/dist/esm/styles/hljs/railscasts';
 
 import './index.css';
 
 import CurrencyInput from '../lib';
-
-SyntaxHighlighter.registerLanguage('javascript', javascript);
 
 const defaultValue = 0.0;
 const maxValue = 999999999.99;
@@ -22,7 +17,11 @@ function BrlCurrencyInput() {
   const fixtureState = fixtureParams.get('state');
   const controlledLag = fixtureParams.get('controlled') === 'lag';
   const controlledOutOfRange = fixtureParams.get('controlled') === 'out-of-range';
-  const [format, setFormat] = useState({ locale: initialLocale, currency: initialCurrency, maximumFractionDigits: initialScale });
+  const [format, setFormat] = useState({
+    locale: initialLocale,
+    currency: initialCurrency,
+    maximumFractionDigits: initialScale,
+  });
   const { locale, currency, maximumFractionDigits } = format;
   const [value, setValue] = useState(defaultValue);
   const [maskedValue, setMaskedValue] = useState(
@@ -70,21 +69,40 @@ function BrlCurrencyInput() {
         autoFocus={true}
       />
       <div className='format-controls' aria-label='Format controls'>
-        <button type='button' onClick={() => setFormat({ locale: 'en-US', currency: 'USD', maximumFractionDigits: undefined })}>
+        <button
+          type='button'
+          onClick={() => setFormat({ locale: 'en-US', currency: 'USD', maximumFractionDigits: undefined })}
+        >
           Use US dollars
         </button>
-        <button type='button' onClick={() => setFormat({ locale: 'de-DE', currency: 'EUR', maximumFractionDigits: undefined })}>
+        <button
+          type='button'
+          onClick={() => setFormat({ locale: 'de-DE', currency: 'EUR', maximumFractionDigits: undefined })}
+        >
           Use German euros
         </button>
-        <button type='button' onClick={() => setFormat({ locale: 'pt-BR', currency: 'BRL', maximumFractionDigits: undefined })}>
+        <button
+          type='button'
+          onClick={() => setFormat({ locale: 'pt-BR', currency: 'BRL', maximumFractionDigits: undefined })}
+        >
           Use Brazilian reais
         </button>
       </div>
-      <p className='sr-only' id='currency-help'>Enter digits to edit the amount. The value is limited to {maxValue}.</p>
-      <p>Value: <strong id='currentValue'>{value}</strong></p>
-      <p>Masked Value: <strong id='maskedValue'>{maskedValue}</strong></p>
-      <p className='sr-only'>Native changes: <strong id='nativeChangeCount'>{nativeChangeCount}</strong></p>
-      <p>Max Value: <strong>{maxValue}</strong></p>
+      <p className='sr-only' id='currency-help'>
+        Enter digits to edit the amount. The value is limited to {maxValue}.
+      </p>
+      <p>
+        Value: <strong id='currentValue'>{value}</strong>
+      </p>
+      <p>
+        Masked Value: <strong id='maskedValue'>{maskedValue}</strong>
+      </p>
+      <p className='sr-only'>
+        Native changes: <strong id='nativeChangeCount'>{nativeChangeCount}</strong>
+      </p>
+      <p>
+        Max Value: <strong>{maxValue}</strong>
+      </p>
     </>
   );
 }
@@ -95,9 +113,9 @@ function App() {
       <section>
         <h1>react-intl-currency-input example</h1>
         <p>Using this configuration:</p>
-        <SyntaxHighlighter language='javascript' style={railcasts}>
-          {JSON.stringify({ locale: 'pt-BR', currency: 'BRL' }, null, 2).replace(regex, subst)}
-        </SyntaxHighlighter>
+        <pre>
+          <code>{JSON.stringify({ locale: 'pt-BR', currency: 'BRL' }, null, 2).replace(regex, subst)}</code>
+        </pre>
         <p>Just input some amount to see the returned values:</p>
         <BrlCurrencyInput />
       </section>

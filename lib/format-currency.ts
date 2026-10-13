@@ -1,5 +1,3 @@
-import Big from 'big.js';
-
 import { IntlFormatterConfig } from './types';
 
 export function resolveCurrencyFormatOptions(
@@ -7,10 +5,9 @@ export function resolveCurrencyFormatOptions(
   currency: string,
   options: Intl.NumberFormatOptions = {},
 ): Intl.NumberFormatOptions {
-  const minimumFractionDigits = options.minimumFractionDigits
-    ?? (options.maximumFractionDigits === undefined
-      ? 2
-      : Math.min(2, options.maximumFractionDigits));
+  const minimumFractionDigits =
+    options.minimumFractionDigits ??
+    (options.maximumFractionDigits === undefined ? 2 : Math.min(2, options.maximumFractionDigits));
   const maximumFractionDigits = options.maximumFractionDigits ?? Math.max(minimumFractionDigits, 2);
 
   if (
@@ -31,7 +28,8 @@ export function resolveCurrencyFormatOptions(
     }
     new globalThis.Intl.NumberFormat(locale, { ...options, style: 'currency', currency });
   } catch (error) {
-    const reason = error instanceof RangeError && /locale/i.test(error.message) ? 'locale' : 'currency or format options';
+    const reason =
+      error instanceof RangeError && /locale/i.test(error.message) ? 'locale' : 'currency or format options';
     throw new RangeError(`Invalid currency format configuration for ${reason}`, { cause: error });
   }
 
@@ -60,7 +58,7 @@ export function formatCurrency(
   if (typeof localeOrConfig !== 'string') {
     const numberConfig = localeOrConfig.formats.number[currency];
     const formatter = new globalThis.Intl.NumberFormat(localeOrConfig.locale, numberConfig);
-    return formatter.format(Big(value).toNumber());
+    return formatter.format(value);
   }
 
   const formatter = new globalThis.Intl.NumberFormat(
@@ -68,7 +66,7 @@ export function formatCurrency(
     resolveCurrencyFormatOptions(localeOrConfig, currency, options),
   );
 
-  return formatter.format(Big(value).toNumber());
+  return formatter.format(value);
 }
 
 export default formatCurrency;
