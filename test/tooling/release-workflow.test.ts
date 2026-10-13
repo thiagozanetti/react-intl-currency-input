@@ -39,7 +39,11 @@ describe('release automation contract', () => {
     const workflow = read('.github/workflows/release.yml');
 
     expect(workflow).toContain('types: [published]');
-    expect(workflow).not.toContain('workflow_dispatch');
+    expect(workflow).toContain('workflow_dispatch:');
+    expect(workflow).toContain('tag:');
+    expect(workflow).toContain('releases/tags/');
+    expect(workflow).toContain('draft == false');
+    expect(workflow).toContain('prerelease == false');
     expect(workflow).toContain('scripts/validate-release.mjs');
     expect(workflow).toContain('github.event.release.tag_name');
     expect(workflow).toContain('npm publish');
@@ -50,14 +54,18 @@ describe('release automation contract', () => {
     expect(workflow).toContain('actions/download-artifact@v4');
     expect(workflow).toContain('buildCommand');
     expect(workflow).toContain('outputDirectory');
-    expect(workflow).toContain('vercel@latest pull --yes --environment=production');
+    expect(workflow).toContain(
+      'vercel@latest pull --yes --environment=production',
+    );
     expect(workflow).toContain('vercel@latest build --prod');
     expect(workflow).toContain('gh issue list --repo "$REPOSITORY"');
-    expect(workflow).toContain('gh issue comment "$issue" --repo "$REPOSITORY"');
+    expect(workflow).toContain(
+      'gh issue comment "$issue" --repo "$REPOSITORY"',
+    );
     expect(workflow).toContain('gh issue create --repo "$REPOSITORY"');
     expect(workflow).toMatch(/vercel(?:@latest)? deploy --prebuilt/);
     expect(workflow).toContain('GITHUB_STEP_SUMMARY');
-    expect(workflow).toContain('github.sha');
+    expect(workflow).toContain('release_commit');
     expect(workflow).toContain('sha256sum');
     expect(workflow).toContain('gh issue');
     expect(workflow).toContain('if: always()');
@@ -81,6 +89,8 @@ describe('release automation contract', () => {
     expect(agents).toMatch(/only\s+a\s+published GitHub Release triggers CD/i);
     expect(agents).toContain('must not create or push tags');
     expect(agents).toMatch(/release tags must match `package\.json`/i);
-    expect(readme).not.toMatch(/does not publish to npm|create an external release|push a tag/i);
+    expect(readme).not.toMatch(
+      /does not publish to npm|create an external release|push a tag/i,
+    );
   });
 });

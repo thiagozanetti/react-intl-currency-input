@@ -68,7 +68,9 @@ exactly and must be bare stable SemVer tags such as `1.0.0`; prerelease tags
 are rejected before side effects. Agents must not create or push tags without
 explicit authorization. Before modifying release tooling, inspect and follow
 the release workflow and preserve its least-privilege, protected-environment,
-artifact-promotion, and evidence requirements.
+artifact-promotion, and evidence requirements. Promotion retries may reference
+only an existing published GitHub Release; they must not create, move, or
+recreate a tag or promote an unpublished, draft, or prerelease release.
 
 Unrelated findings belong in follow-up notes unless they block an acceptance
 criterion, compromise correctness or safety, or invalidate the release

@@ -3,22 +3,34 @@ name: Release
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published release tag to retry
+        required: true
+        type: string
 
 permissions: {}
 
+env:
+  RELEASE_TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+
 concurrency:
-  group: release-${{ github.event.release.id }}
+  group: release-${{ github.event_name }}-${{ github.event.release.id || inputs.tag }}
   cancel-in-progress: false
 
 jobs:
   validate:
+    outputs:
+      release_tag: ${{ steps.release_metadata.outputs.release_tag }}
+      release_commit: ${{ steps.release_metadata.outputs.release_commit }}
     permissions:
       contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ env.RELEASE_TAG }}
           fetch-depth: 0
       - name: Use Node.js 24
         uses: actions/setup-node@v4
@@ -26,8 +38,18 @@ jobs:
           node-version: 24.x
           cache: npm
       - run: npm ci
+      - name: Validate published release and resolve immutable commit
+        id: release_metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_json=$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${RELEASE_TAG}")
+          echo "$release_json" | jq -e '.draft == false and .prerelease == false'
+          release_commit=$(git rev-list -n1 "refs/tags/${RELEASE_TAG}^{commit}")
+          echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "release_commit=$release_commit" >> "$GITHUB_OUTPUT"
       - name: Validate stable release tag
-        run: node scripts/validate-release.mjs "${{ github.event.release.tag_name }}" "${{ github.sha }}"
+        run: node scripts/validate-release.mjs "${{ steps.release_metadata.outputs.release_tag }}" "${{ steps.release_metadata.outputs.release_commit }}"
 
   build:
     needs: validate
@@ -38,10 +60,12 @@ jobs:
     outputs:
       release_artifact_id: ${{ steps.release_artifacts.outputs.artifact-id }}
       vercel_artifact_id: ${{ steps.vercel_artifact.outputs.artifact-id }}
+      release_tag: ${{ needs.validate.outputs.release_tag }}
+      release_commit: ${{ needs.validate.outputs.release_commit }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ needs.validate.outputs.release_tag }}
           fetch-depth: 0
       - name: Use Node.js 24
         uses: actions/setup-node@v4
@@ -78,20 +102,20 @@ jobs:
       - name: Write release evidence
         run: |
           cat > release-artifacts/evidence.json <<EOF
-          {"tag":"${{ github.event.release.tag_name }}","commit":"${{ github.sha }}","npm_artifact":"release-artifacts/npm","vercel_artifact":"release-artifacts/vercel-output.tgz","npm_checksum":"$(cut -d ' ' -f1 release-artifacts/npm.sha256)","vercel_checksum":"$(cut -d ' ' -f1 release-artifacts/vercel.sha256)","npm_provenance":"npm publish --provenance"}
+          {"tag":"${{ needs.validate.outputs.release_tag }}","commit":"${{ needs.validate.outputs.release_commit }}","npm_artifact":"release-artifacts/npm","vercel_artifact":"release-artifacts/vercel-output.tgz","npm_checksum":"$(cut -d ' ' -f1 release-artifacts/npm.sha256)","vercel_checksum":"$(cut -d ' ' -f1 release-artifacts/vercel.sha256)","npm_provenance":"npm publish --provenance"}
           EOF
       - name: Upload immutable release artifacts
         id: release_artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-${{ github.event.release.tag_name }}-${{ github.sha }}
+          name: release-${{ needs.validate.outputs.release_tag }}-${{ needs.validate.outputs.release_commit }}
           path: release-artifacts/
           if-no-files-found: error
       - name: Upload Vercel artifact identifier
         id: vercel_artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vercel-release-${{ github.event.release.tag_name }}-${{ github.sha }}
+          name: vercel-release-${{ needs.validate.outputs.release_tag }}-${{ needs.validate.outputs.release_commit }}
           path: release-artifacts/vercel-output.tgz
           if-no-files-found: error
 
@@ -105,7 +129,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ needs.build.outputs.release_tag }}
       - name: Use Node.js 24
         uses: actions/setup-node@v4
         with:
@@ -113,7 +137,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - uses: actions/download-artifact@v4
         with:
-          name: release-${{ github.event.release.tag_name }}-${{ github.sha }}
+          name: release-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}
           path: release-artifacts
       - name: Publish immutable package with npm Trusted Publishing
         run: |
@@ -127,8 +151,8 @@ jobs:
         run: |
           {
             echo "## npm promotion"
-            echo "- commit: ${{ github.sha }}"
-            echo "- artifact: release-${{ github.event.release.tag_name }}-${{ github.sha }} (id ${{ needs.build.outputs.release_artifact_id }})"
+            echo "- commit: ${{ needs.build.outputs.release_commit }}"
+            echo "- artifact: release-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }} (id ${{ needs.build.outputs.release_artifact_id }})"
             echo "- package: $(node -p "require('./package.json').name")@$(node -p "require('./package.json').version")"
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -141,14 +165,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ needs.build.outputs.release_tag }}
       - name: Use Node.js 24
         uses: actions/setup-node@v4
         with:
           node-version: 24.x
       - uses: actions/download-artifact@v4
         with:
-          name: vercel-release-${{ github.event.release.tag_name }}-${{ github.sha }}
+          name: vercel-release-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}
           path: release-artifacts
       - name: Promote immutable Vercel artifact
         id: deploy
@@ -161,19 +185,19 @@ jobs:
         if: always()
         run: |
           cat > release-evidence.json <<EOF
-          {"tag":"${{ github.event.release.tag_name }}","commit":"${{ github.sha }}","artifact":"vercel-release-${{ github.event.release.tag_name }}-${{ github.sha }}","artifact_id":"${{ needs.build.outputs.vercel_artifact_id }}","deployment_url":"${{ steps.deploy.outputs.deployment_url }}"}
+          {"tag":"${{ needs.build.outputs.release_tag }}","commit":"${{ needs.build.outputs.release_commit }}","artifact":"vercel-release-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}","artifact_id":"${{ needs.build.outputs.vercel_artifact_id }}","deployment_url":"${{ steps.deploy.outputs.deployment_url }}"}
           EOF
           {
             echo "## Vercel promotion"
-            echo "- commit: ${{ github.sha }}"
-            echo "- artifact: vercel-release-${{ github.event.release.tag_name }}-${{ github.sha }} (id ${{ needs.build.outputs.vercel_artifact_id }})"
+            echo "- commit: ${{ needs.build.outputs.release_commit }}"
+            echo "- artifact: vercel-release-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }} (id ${{ needs.build.outputs.vercel_artifact_id }})"
             echo "- deployment URL: ${{ steps.deploy.outputs.deployment_url }}"
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Upload deployment evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: deployment-evidence-${{ github.event.release.tag_name }}-${{ github.sha }}
+          name: deployment-evidence-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}
           path: release-evidence.json
           if-no-files-found: ignore
 
@@ -189,7 +213,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          TAG: ${{ github.event.release.tag_name }}
+          TAG: ${{ env.RELEASE_TAG }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           title="Release failure: $TAG"
