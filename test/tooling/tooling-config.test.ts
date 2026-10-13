@@ -54,6 +54,18 @@ describe('modern tooling configuration', () => {
     expect(app).toMatch(/<pre>\s*<code>/);
   });
 
+  it('keeps the React test platform on the current supported major', () => {
+    expect(packageJson.devDependencies).toEqual(
+      expect.objectContaining({
+        '@testing-library/react': expect.stringMatching(/^\^?16\./),
+        '@types/react': expect.stringMatching(/^\^?19\./),
+        '@types/react-dom': expect.stringMatching(/^\^?19\./),
+        react: expect.stringMatching(/^\^?19\./),
+        'react-dom': expect.stringMatching(/^\^?19\./),
+      }),
+    );
+  });
+
   it('keeps the release workflow and lint toolchain modern and substantive', () => {
     const workflow = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
     const biomeConfig = readFileSync(resolve(root, 'biome.json'), 'utf8');
