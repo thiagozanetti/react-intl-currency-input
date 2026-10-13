@@ -30,6 +30,7 @@ The stable release of the modern React currency input API.
 - The browser-emulation test environment now uses `jsdom` 30.1.2.
 - The application and fixture build tooling now uses Vite 8.3.4 with `@vitejs/plugin-react` 6.1.2.
 - Unit tests and coverage now use Vitest 5.0.4 with `@vitest/coverage-v8` 5.0.4.
+- Library output now uses tsdown 0.23.1 for ESM, CommonJS, and declaration artifacts; Vite remains responsible for the application build.
 
 ### Removed
 

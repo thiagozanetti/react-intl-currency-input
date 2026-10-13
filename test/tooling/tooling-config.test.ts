@@ -83,6 +83,11 @@ describe('modern tooling configuration', () => {
     expect(packageJson.devDependencies.typescript).toMatch(/^\^?5\.9\./);
   });
 
+  it('uses the planned modern library bundler', () => {
+    expect(packageJson.scripts['build:lib']).toContain('tsdown');
+    expect(packageJson.devDependencies.tsdown).toMatch(/^\^?0\.23\./);
+  });
+
   it('keeps Vitest and coverage tooling on their compatible supported majors', () => {
     expect(packageJson.devDependencies).toEqual(
       expect.objectContaining({
@@ -107,7 +112,7 @@ describe('modern tooling configuration', () => {
         vite: expect.stringMatching(/^\^?8\./),
         vitest: expect.stringMatching(/^\^?5\./),
         '@vitejs/plugin-react': expect.stringMatching(/^\^?6\./),
-        tsup: expect.stringMatching(/^\^?8\./),
+        tsdown: expect.stringMatching(/^\^?0\.23\./),
       }),
     );
     expect(packageJson.devDependencies).not.toHaveProperty('eslint');

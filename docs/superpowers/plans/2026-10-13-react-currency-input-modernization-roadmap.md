@@ -6,7 +6,7 @@
 
 **Architecture:** Preserve the native `BigInt`/minor-unit arithmetic model and the typed `CurrencyInput` contract. Modernize tooling and dependencies in isolated, reversible batches. Every batch must prove that the packed package, framework fixtures, browser interactions, and release workflow still satisfy the approved design.
 
-**Tech Stack:** Node 24, Biome 2.5.15, TypeScript, Vite, Vitest, React Testing Library, Playwright, tsup, npm, and Vite/Next.js/Remix consumer fixtures.
+**Tech Stack:** Node 24, Biome 2.5.15, TypeScript, Vite, Vitest, React Testing Library, Playwright, tsdown, npm, and Vite/Next.js/Remix consumer fixtures.
 
 **Spec:** [`docs/superpowers/specs/2026-10-08-react-currency-input-modernization-design.md`](../specs/2026-10-08-react-currency-input-modernization-design.md)
 
@@ -105,8 +105,8 @@ For each batch: update one related group, run the cheap checks, inspect the diff
 
 ### Phase 4 — Simplify build and maintenance tooling
 
-- [ ] Compare tsup with Vite library mode and `tsdown` against the existing ESM/CJS/declaration/SSR contract.
-- [ ] Switch bundlers only if the packed tarball, exports map, declarations, tree-shaking, SSR imports, and fixtures remain equivalent.
+- [x] Compare the existing tsup output with Vite Library Mode and `tsdown` against the ESM/CJS/declaration/SSR contract; Vite required a separate declaration strategy, while tsdown produced the required artifact set directly.
+- [x] Switch the library bundler to tsdown 0.23.1; the packed tarball, exports map, declarations, SSR imports, and fixtures remain equivalent.
 - [ ] Replace shell-specific `rm -rf` package scripts with a portable Node cleanup script where practical.
 - [ ] Keep generated artifacts out of the repository and verify clean worktrees after validation.
 - [ ] Revisit Biome rule exceptions one at a time; enable stronger rules only with behavior-focused tests.
@@ -165,8 +165,10 @@ Fixture install audits may report vulnerabilities inherited from the Next.js or 
 - Root audit, lint, typecheck, documentation checks, builds, package checks, fixtures, unit tests, and coverage have passed.
 - Chromium and Firefox browser suites passed.
 - WebKit is currently blocked locally by missing host libraries (`libicudata.so.70`, `libicui18n.so.70`, `libicuuc.so.70`, and `libavif.so.13`); CI remains authoritative for that project until the host is repaired.
-- The Vitest 5.0.4 and `@vitest/coverage-v8` 5.0.4 batch is implemented; the current worktree is still uncommitted and unpushed until this topic commit is created.
+- The Vitest 5.0.4 and `@vitest/coverage-v8` 5.0.4 batch is implemented.
 - TypeScript 7.0.2 was evaluated separately; its compiler diagnostics were clean after config migration, but the existing `tsup` declaration build is incompatible, so adoption is deferred with the bundler review.
+- The tsdown 0.23.1 batch replaces tsup for library output; Vite remains the application bundler, and Vite Library Mode was not selected because it requires a separate declaration-bundling strategy.
+- The current tsdown worktree changes are still uncommitted and unpushed; CI and release status must be revalidated after committing and pushing.
 
 ## Completion evidence
 
