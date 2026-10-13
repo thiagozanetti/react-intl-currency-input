@@ -88,7 +88,7 @@ For each batch: update one related group, run the cheap checks, inspect the diff
 
 #### 3.2 Build, type, and test tools
 
-- [ ] Evaluate the current supported Vite and `@vitejs/plugin-react` majors as one compatibility group.
+- [x] Evaluate and adopt the current supported Vite and `@vitejs/plugin-react` majors as one compatibility group; Vite `8.3.4` and plugin `6.1.2` passed the build, package, fixture, unit, coverage, and Chromium/Firefox checks.
 - [ ] Evaluate Vitest and coverage-provider majors together, preserving the current coverage thresholds and test ordering.
 - [ ] Evaluate TypeScript only after the Vite/Vitest toolchain is stable; treat compiler diagnostics as a separate review.
 - [ ] Record any incompatibility as a follow-up rather than combining unrelated source changes.

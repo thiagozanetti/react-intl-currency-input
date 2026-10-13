@@ -70,6 +70,15 @@ describe('modern tooling configuration', () => {
     expect(packageJson.devDependencies.jsdom).toMatch(/^\^?30\./);
   });
 
+  it('keeps Vite and the React plugin on their compatible supported majors', () => {
+    expect(packageJson.devDependencies).toEqual(
+      expect.objectContaining({
+        '@vitejs/plugin-react': expect.stringMatching(/^\^?6\./),
+        vite: expect.stringMatching(/^\^?8\./),
+      }),
+    );
+  });
+
   it('keeps the release workflow and lint toolchain modern and substantive', () => {
     const workflow = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
     const biomeConfig = readFileSync(resolve(root, 'biome.json'), 'utf8');
@@ -82,9 +91,9 @@ describe('modern tooling configuration', () => {
       expect.objectContaining({
         '@biomejs/biome': expect.stringMatching(/^\^?2\./),
         typescript: expect.stringMatching(/^\^?5\.9\./),
-        vite: expect.stringMatching(/^\^?7\./),
+        vite: expect.stringMatching(/^\^?8\./),
         vitest: expect.stringMatching(/^\^?4\./),
-        '@vitejs/plugin-react': expect.stringMatching(/^\^?5\./),
+        '@vitejs/plugin-react': expect.stringMatching(/^\^?6\./),
         tsup: expect.stringMatching(/^\^?8\./),
       }),
     );
