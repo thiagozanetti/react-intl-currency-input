@@ -202,6 +202,7 @@ dist
 **/*.back.*
 
 node_modules
+.worktrees/
 
 *.sublime*
 

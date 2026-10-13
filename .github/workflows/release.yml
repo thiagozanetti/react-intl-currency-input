@@ -1,0 +1,191 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.event.release.id }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+      - run: npm ci
+      - name: Validate stable release tag
+        run: node scripts/validate-release.mjs "${{ github.event.release.tag_name }}" "${{ github.sha }}"
+
+  build:
+    needs: validate
+    environment: Production
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    outputs:
+      release_artifact_id: ${{ steps.release_artifacts.outputs.artifact-id }}
+      vercel_artifact_id: ${{ steps.vercel_artifact.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test:unit -- --run
+      - run: npm run verify:docs
+      - run: npm run build:all
+      - run: npm run verify:package
+      - name: Build immutable npm package artifact
+        run: |
+          mkdir -p release-artifacts/npm
+          npm pack --pack-destination release-artifacts/npm
+          sha256sum release-artifacts/npm/*.tgz > release-artifacts/npm.sha256
+      - name: Build immutable Vercel artifact
+        run: |
+          npx vercel@latest pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+          npx vercel@latest build --prod --token="${{ secrets.VERCEL_TOKEN }}"
+          tar -czf release-artifacts/vercel-output.tgz .vercel/output
+          sha256sum release-artifacts/vercel-output.tgz > release-artifacts/vercel.sha256
+      - name: Write release evidence
+        run: |
+          cat > release-artifacts/evidence.json <<EOF
+          {"tag":"${{ github.event.release.tag_name }}","commit":"${{ github.sha }}","npm_artifact":"release-artifacts/npm","vercel_artifact":"release-artifacts/vercel-output.tgz","npm_checksum":"$(cut -d ' ' -f1 release-artifacts/npm.sha256)","vercel_checksum":"$(cut -d ' ' -f1 release-artifacts/vercel.sha256)","npm_provenance":"npm publish --provenance"}
+          EOF
+      - name: Upload immutable release artifacts
+        id: release_artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ github.event.release.tag_name }}-${{ github.sha }}
+          path: release-artifacts/
+          if-no-files-found: error
+      - name: Upload Vercel artifact identifier
+        id: vercel_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vercel-release-${{ github.event.release.tag_name }}-${{ github.sha }}
+          path: release-artifacts/vercel-output.tgz
+          if-no-files-found: error
+
+  publish-npm:
+    needs: build
+    environment: Production
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          registry-url: https://registry.npmjs.org/
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-${{ github.event.release.tag_name }}-${{ github.sha }}
+          path: release-artifacts
+      - name: Publish immutable package with npm Trusted Publishing
+        run: |
+          if npm view "$(node -p "require('./package.json').name")@$(node -p "require('./package.json').version")" version >/dev/null 2>&1; then
+            echo "Package version is already published; treating retry as idempotent."
+          else
+            npm publish release-artifacts/npm/*.tgz --provenance --access public
+          fi
+      - name: Record npm evidence
+        if: always()
+        run: |
+          {
+            echo "## npm promotion"
+            echo "- commit: ${{ github.sha }}"
+            echo "- artifact: release-${{ github.event.release.tag_name }}-${{ github.sha }} (id ${{ needs.build.outputs.release_artifact_id }})"
+            echo "- package: $(node -p "require('./package.json').name")@$(node -p "require('./package.json').version")"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-vercel:
+    needs: build
+    environment: Production
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+      - uses: actions/download-artifact@v4
+        with:
+          name: vercel-release-${{ github.event.release.tag_name }}-${{ github.sha }}
+          path: release-artifacts
+      - name: Promote immutable Vercel artifact
+        id: deploy
+        run: |
+          mkdir -p .vercel
+          tar -xzf release-artifacts/vercel-output.tgz
+          deployment_url=$(npx vercel@latest deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}")
+          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
+      - name: Record deployment evidence
+        if: always()
+        run: |
+          cat > release-evidence.json <<EOF
+          {"tag":"${{ github.event.release.tag_name }}","commit":"${{ github.sha }}","artifact":"vercel-release-${{ github.event.release.tag_name }}-${{ github.sha }}","artifact_id":"${{ needs.build.outputs.vercel_artifact_id }}","deployment_url":"${{ steps.deploy.outputs.deployment_url }}"}
+          EOF
+          {
+            echo "## Vercel promotion"
+            echo "- commit: ${{ github.sha }}"
+            echo "- artifact: vercel-release-${{ github.event.release.tag_name }}-${{ github.sha }} (id ${{ needs.build.outputs.vercel_artifact_id }})"
+            echo "- deployment URL: ${{ steps.deploy.outputs.deployment_url }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-evidence-${{ github.event.release.tag_name }}-${{ github.sha }}
+          path: release-evidence.json
+          if-no-files-found: ignore
+
+  release-failure:
+    if: ${{ always() && (needs.validate.result == 'failure' || needs.build.result == 'failure' || needs.publish-npm.result == 'failure' || needs.deploy-vercel.result == 'failure') }}
+    needs: [validate, build, publish-npm, deploy-vercel]
+    permissions:
+      contents: read
+      issues: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create or update release failure issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Release failure: $TAG"
+          issue=$(gh issue list --state open --search "${title} in:title" --json number --jq '.[0].number')
+          if [ -n "$issue" ]; then
+            gh issue comment "$issue" --body "Retry failed for [$TAG]($RUN_URL)."
+          else
+            gh issue create --title "$title" --body "The automated release for [$TAG]($RUN_URL) failed. Check the run evidence and retry the independently idempotent promotion jobs."
+          fi

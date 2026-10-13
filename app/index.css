@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;500;700;800&display=swap');
-
 html, body {
   margin: 0;
   padding: 0;
@@ -8,7 +6,7 @@ html, body {
 body {
   background-color: #2E3436;
   color: #D3D7CF;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: ui-monospace, 'DejaVu Sans Mono', monospace;
   font-size: 11pt;
 }
 
@@ -16,10 +14,39 @@ main {
   display: flex;
   justify-content: center;
   height: 100dvh;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 section {
+  box-sizing: border-box;
   background-color: #242829;
   padding: 10px 50px;
   min-height: 33rem;
+  max-width: 48rem;
+  width: 100%;
+}
+
+input:focus {
+  outline: 3px solid #ffcc00;
+  outline-offset: 2px;
+}
+
+.format-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
