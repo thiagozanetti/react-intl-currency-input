@@ -48,6 +48,12 @@ describe('release automation contract', () => {
     expect(workflow).toContain('id-token: write');
     expect(workflow).toContain('actions/upload-artifact@v4');
     expect(workflow).toContain('actions/download-artifact@v4');
+    expect(workflow).toContain('vercel@latest pull --yes --environment=production');
+    expect(workflow).toContain('vercel@latest build --prod');
+    expect(workflow).toContain('--cwd app');
+    expect(workflow).toContain('gh issue list --repo "$REPOSITORY"');
+    expect(workflow).toContain('gh issue comment "$issue" --repo "$REPOSITORY"');
+    expect(workflow).toContain('gh issue create --repo "$REPOSITORY"');
     expect(workflow).toMatch(/vercel(?:@latest)? deploy --prebuilt/);
     expect(workflow).toContain('GITHUB_STEP_SUMMARY');
     expect(workflow).toContain('github.sha');
