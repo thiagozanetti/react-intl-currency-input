@@ -115,11 +115,11 @@ function App() {
 
   return (
     <main>
-      <p className='build-info' data-testid='build-info'>
-        Version {buildVersion} · commit {displayedBuildCommit} · built{' '}
-        <time dateTime={buildTimestamp}>{buildTimestamp}</time>
-      </p>
       <section>
+        <p className='build-info' data-testid='build-info'>
+          Version {buildVersion} · commit {displayedBuildCommit} · built{' '}
+          <time dateTime={buildTimestamp}>{buildTimestamp}</time>
+        </p>
         <h1>react-intl-currency-input example</h1>
         <p>Using this configuration:</p>
         <pre>

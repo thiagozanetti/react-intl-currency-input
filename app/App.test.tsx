@@ -8,7 +8,7 @@ describe('App', () => {
   it('renders the deployed build identity in the compact top-right line', () => {
     const { container } = render(<App />);
 
-    expect(container.querySelector('[data-testid="build-info"]')).toHaveTextContent(
+    expect(container.querySelector('section [data-testid="build-info"]')).toHaveTextContent(
       /Version 1\.0\.0 · commit (local|[0-9a-f]+) · built \d{4}-\d{2}-\d{2}T/,
     );
   });
