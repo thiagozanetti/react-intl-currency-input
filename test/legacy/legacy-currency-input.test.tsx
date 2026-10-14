@@ -1,10 +1,9 @@
-import { forwardRef, useState } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { forwardRef, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-
+import type { IntlFormatterConfig } from '../../lib/types';
 import IntlCurrencyInput from './LegacyIntlCurrencyInput';
-import { IntlFormatterConfig } from '../../lib/types';
 
 const usdConfig: IntlFormatterConfig = {
   locale: 'en-US',
@@ -42,20 +41,20 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
   });
 
   it('renders defaultValue as a public decimal value', () => {
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} defaultValue={1234.56} />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} defaultValue={1234.56} />);
 
     expect(screen.getByRole('textbox')).toHaveValue('$1,234.56');
   });
 
   it('keeps the legacy integer number normalization unchanged', () => {
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} defaultValue={1234} />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} defaultValue={1234} />);
 
     expect(screen.getByRole('textbox')).toHaveValue('$1,234.00');
   });
 
   it('converts an integer input event into a two-decimal value', () => {
     const onChange = vi.fn();
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} onChange={onChange} />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} onChange={onChange} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.change(input, { target: { value: '123456' } });
@@ -66,7 +65,7 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
   });
 
   it('preserves embedded zeroes in a string input', () => {
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.change(input, { target: { value: '205' } });
@@ -76,7 +75,7 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
 
   it('formats negative values and normalizes a negative zero string', () => {
     const onChange = vi.fn();
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} onChange={onChange} />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} onChange={onChange} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.change(input, { target: { value: '-123456' } });
@@ -89,7 +88,7 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
 
   it('reports zero edits through the legacy callback, including repeated zero edits', () => {
     const onChange = vi.fn();
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} onChange={onChange} />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} onChange={onChange} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.change(input, { target: { value: '0' } });
@@ -105,10 +104,10 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
   it('does not call the legacy callback while only formatting props change', () => {
     const onChange = vi.fn();
     const { rerender } = render(
-      <IntlCurrencyInput currency="USD" config={usdConfig} defaultValue={12.34} onChange={onChange} />,
+      <IntlCurrencyInput currency='USD' config={usdConfig} defaultValue={12.34} onChange={onChange} />,
     );
 
-    rerender(<IntlCurrencyInput currency="BRL" config={brlConfig} defaultValue={12.34} onChange={onChange} />);
+    rerender(<IntlCurrencyInput currency='BRL' config={brlConfig} defaultValue={12.34} onChange={onChange} />);
 
     expect(screen.getByRole('textbox')).toHaveValue('R$ 12,34');
     expect(onChange).not.toHaveBeenCalled();
@@ -116,7 +115,7 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
 
   it('keeps the previous display and suppresses onChange above max', () => {
     const onChange = vi.fn();
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} max={10} onChange={onChange} />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} max={10} onChange={onChange} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.change(input, { target: { value: '1001' } });
@@ -126,7 +125,7 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
   });
 
   it('rejects a value above a zero max', () => {
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} max={0} />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} max={0} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.change(input, { target: { value: '100' } });
@@ -136,18 +135,18 @@ describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
 
   it('uses the current value prop, including zero, over defaultValue', () => {
     const { rerender } = render(
-      <IntlCurrencyInput currency="USD" config={usdConfig} value={12.34} defaultValue={56.78} />,
+      <IntlCurrencyInput currency='USD' config={usdConfig} value={12.34} defaultValue={56.78} />,
     );
     expect(screen.getByRole('textbox')).toHaveValue('$12.34');
 
-    rerender(<IntlCurrencyInput currency="USD" config={usdConfig} value={0} defaultValue={56.78} />);
+    rerender(<IntlCurrencyInput currency='USD' config={usdConfig} value={0} defaultValue={56.78} />);
     expect(screen.getByRole('textbox')).toHaveValue('$0.00');
   });
 });
 
 describe('legacy IntlCurrencyInput interaction behavior', () => {
   it('supports autoFocus and autoSelect on focus', () => {
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} defaultValue={12.34} autoFocus autoSelect />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} defaultValue={12.34} autoFocus autoSelect />);
     const input = screen.getByRole('textbox');
 
     expect(input).toHaveFocus();
@@ -159,7 +158,9 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
     const inputRef = { current: null as HTMLInputElement | null };
     const onFocus = vi.fn();
     const onBlur = vi.fn();
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} inputRef={inputRef} onFocus={onFocus} onBlur={onBlur} />);
+    render(
+      <IntlCurrencyInput currency='USD' config={usdConfig} inputRef={inputRef} onFocus={onFocus} onBlur={onBlur} />,
+    );
 
     fireEvent.focus(inputRef.current!);
     fireEvent.blur(inputRef.current!);
@@ -171,7 +172,7 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
 
   it('emits key, keyCode, and native event through legacy onKeyPress', () => {
     const onKeyPress = vi.fn();
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} onKeyPress={onKeyPress} />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} onKeyPress={onKeyPress} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.keyUp(input, { key: '5', keyCode: 53 });
@@ -181,17 +182,17 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
 
   it('renders a forwarded custom input component', () => {
     const CustomInput = forwardRef<HTMLInputElement, React.ComponentProps<'input'>>((props, ref) => (
-      <input {...props} ref={ref} data-custom="true" />
+      <input {...props} ref={ref} data-custom='true' />
     ));
     CustomInput.displayName = 'CustomInput';
-    render(<IntlCurrencyInput component={CustomInput} currency="USD" config={usdConfig} />);
+    render(<IntlCurrencyInput component={CustomInput} currency='USD' config={usdConfig} />);
 
     expect(screen.getByRole('textbox')).toHaveAttribute('data-custom', 'true');
   });
 
   it('sanitizes pasted-looking change values and keeps the caret at the browser-managed end', async () => {
     const user = userEvent.setup();
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.change(input, { target: { value: '$1,234.56' } });
@@ -201,7 +202,7 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
   });
 
   it('resets on blur when autoReset is enabled', () => {
-    render(<IntlCurrencyInput currency="USD" config={usdConfig} defaultValue={12.34} autoReset />);
+    render(<IntlCurrencyInput currency='USD' config={usdConfig} defaultValue={12.34} autoReset />);
     const input = screen.getByRole('textbox');
 
     fireEvent.blur(input);
@@ -214,8 +215,10 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
       const [value, setValue] = useState(1.23);
       return (
         <>
-          <button type="button" onClick={() => setValue(45.67)}>update</button>
-          <IntlCurrencyInput currency="USD" config={usdConfig} value={value} />
+          <button type='button' onClick={() => setValue(45.67)}>
+            update
+          </button>
+          <IntlCurrencyInput currency='USD' config={usdConfig} value={value} />
         </>
       );
     }

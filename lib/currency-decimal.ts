@@ -21,9 +21,7 @@ function expandScientificNotation(value: string): string {
 
 function parseDecimal(value: string | number): { negative: boolean; integer: string; fraction: string } {
   const text = typeof value === 'number' ? numberToDecimalString(value) : value.trim();
-  const expanded = typeof value === 'string' && /e/i.test(text)
-    ? text
-    : expandScientificNotation(text);
+  const expanded = typeof value === 'string' && /e/i.test(text) ? text : expandScientificNotation(text);
   const match = /^([+-]?)(\d+)(?:\.(\d+))?$/.exec(expanded);
   if (!match) throw new TypeError(`Expected a finite decimal value, received ${String(value)}`);
 
@@ -53,9 +51,10 @@ export function roundDecimalString(value: string | number, scale: number): strin
   if (coefficient === 0n) return '0';
 
   const digits = coefficient.toString().padStart(scale + 1, '0');
-  const decimal = scale === 0
-    ? digits
-    : `${digits.slice(0, -scale) || '0'}.${digits.slice(-scale)}`.replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
+  const decimal =
+    scale === 0
+      ? digits
+      : `${digits.slice(0, -scale) || '0'}.${digits.slice(-scale)}`.replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
   return parsed.negative ? `-${decimal}` : decimal;
 }
 

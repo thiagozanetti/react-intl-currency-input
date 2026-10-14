@@ -20,7 +20,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "jsx": "react-jsx",
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": ["app", "lib"],
   "references": [{ "path": "./tsconfig.node.json" }]

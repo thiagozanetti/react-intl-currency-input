@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  decimalToMinorUnits,
-  minorUnitsToDecimal,
-  roundDecimalString,
-} from '../../lib/currency-decimal';
+import { decimalToMinorUnits, minorUnitsToDecimal, roundDecimalString } from '../../lib/currency-decimal';
 
 describe('exact currency decimal utilities', () => {
   it('converts decimal strings to and from exact minor units at each supported scale', () => {
@@ -27,9 +23,7 @@ describe('exact currency decimal utilities', () => {
 
   it('normalizes negative zero and preserves large decimal strings exactly internally', () => {
     expect(roundDecimalString('-0.004', 2)).toBe('0');
-    expect(decimalToMinorUnits('12345678901234567890.125', 3)).toBe(
-      12345678901234567890125n,
-    );
+    expect(decimalToMinorUnits('12345678901234567890.125', 3)).toBe(12345678901234567890125n);
   });
 
   it('rejects invalid scales and non-finite decimal values clearly', () => {

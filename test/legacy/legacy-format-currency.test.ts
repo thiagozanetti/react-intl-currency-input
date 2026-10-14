@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import formatCurrency from '../../lib/format-currency';
-import { IntlFormatterConfig } from '../../lib/types';
+import type { IntlFormatterConfig } from '../../lib/types';
 
 const config: IntlFormatterConfig = {
   locale: 'en-US',

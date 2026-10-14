@@ -214,19 +214,30 @@ test.describe('CurrencyInput browser journeys', () => {
     await expect(input).toBeVisible();
     await expect(input).toHaveValue('R$ 0,00');
     await expect(page.locator('main')).toHaveCSS('overflow-x', 'hidden');
-    expect(await page.evaluate(() => ({
-      documentOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      mainOverflow: document.querySelector('main')!.scrollWidth - document.querySelector('main')!.clientWidth,
-      inputBounds: document.querySelector('input')!.getBoundingClientRect().toJSON(),
-      viewportWidth: window.innerWidth,
-    }))).toEqual(expect.objectContaining({ documentOverflow: 0, mainOverflow: 0 }));
-    expect(await input.evaluate((element) => {
-      const bounds = element.getBoundingClientRect();
-      return { left: bounds.left, right: bounds.right, clientWidth: element.clientWidth, scrollWidth: element.scrollWidth };
-    })).toEqual(expect.objectContaining({ left: expect.any(Number), right: expect.any(Number) }));
-    expect(await input.evaluate((element) => {
-      const bounds = element.getBoundingClientRect();
-      return bounds.left >= 0 && bounds.right <= window.innerWidth && element.scrollWidth <= element.clientWidth;
-    })).toBe(true);
+    expect(
+      await page.evaluate(() => ({
+        documentOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        mainOverflow: document.querySelector('main')!.scrollWidth - document.querySelector('main')!.clientWidth,
+        inputBounds: document.querySelector('input')!.getBoundingClientRect().toJSON(),
+        viewportWidth: window.innerWidth,
+      })),
+    ).toEqual(expect.objectContaining({ documentOverflow: 0, mainOverflow: 0 }));
+    expect(
+      await input.evaluate((element) => {
+        const bounds = element.getBoundingClientRect();
+        return {
+          left: bounds.left,
+          right: bounds.right,
+          clientWidth: element.clientWidth,
+          scrollWidth: element.scrollWidth,
+        };
+      }),
+    ).toEqual(expect.objectContaining({ left: expect.any(Number), right: expect.any(Number) }));
+    expect(
+      await input.evaluate((element) => {
+        const bounds = element.getBoundingClientRect();
+        return bounds.left >= 0 && bounds.right <= window.innerWidth && element.scrollWidth <= element.clientWidth;
+      }),
+    ).toBe(true);
   });
 });

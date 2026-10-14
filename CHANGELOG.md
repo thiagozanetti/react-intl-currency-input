@@ -25,6 +25,15 @@ The stable release of the modern React currency input API.
 - Backspace/Delete remove the rightmost digit and `-` toggles the sign.
 - Accepted edits call native `onChange` before `onValueChange`; rejected limit edits call neither callback.
 - Locale, currency, and formatting changes reformat without value callbacks.
+- Internal decimal formatting now uses native `BigInt` arithmetic and `Intl.NumberFormat` without a `big.js` runtime dependency.
+- Development validation now uses Biome and covers React 18 and React 19 consumer environments with the modern React testing platform.
+- The browser-emulation test environment now uses `jsdom` 30.1.2.
+- The application and fixture build tooling now uses Vite 8.3.4 with `@vitejs/plugin-react` 6.1.2.
+- Unit tests and coverage now use Vitest 5.0.4 with `@vitest/coverage-v8` 5.0.4.
+- Library output now uses tsdown 0.23.1 for ESM, CommonJS, and declaration artifacts; Vite remains responsible for the application build.
+- Generated application output now uses a portable Node cleanup script instead of shell-specific recursive removal.
+- Biome now enforces type-only imports and rejects explicit `any` in the checked source, test, script, and configuration files.
+- CI and release automation now use ordered Node 24 checks, least-privilege permissions, published-release validation, immutable artifact checksums, protected production environments, idempotent promotion retries, and release evidence.
 
 ### Removed
 

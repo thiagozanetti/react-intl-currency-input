@@ -27,13 +27,13 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
-      - run: npm run test:unit -- --run
-      - run: npm run coverage
       - run: npm run verify:docs
       - run: npm run build:all
       - run: npm run pack:check
       - run: npm run verify:package
       - run: npm run verify:fixtures
+      - run: npm run test:unit -- --run
+      - run: npm run coverage
 
   browser:
     permissions:

@@ -1,11 +1,16 @@
-import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
+import { describe, expect, it } from 'vitest';
 
 import App from './App';
 
 describe('App', () => {
+  it('renders the static configuration example with native code elements', () => {
+    const { container } = render(<App />);
+
+    expect(container.querySelector('pre > code')).toHaveTextContent(/locale/);
+  });
+
   describe('BrlInputComponent', () => {
     it('must display 0 (R$ 0,00) as the default values', () => {
       // given

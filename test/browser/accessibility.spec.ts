@@ -20,10 +20,14 @@ test.describe('CurrencyInput accessibility contract', () => {
     await input.focus();
     await expect(input).toBeFocused();
     await expect(input).toBeVisible();
-    await expect.poll(() => input.evaluate((element) => {
-      const style = getComputedStyle(element);
-      return [style.outlineStyle, style.outlineWidth, style.outlineColor];
-    })).toEqual(['solid', '3px', 'rgb(255, 204, 0)']);
+    await expect
+      .poll(() =>
+        input.evaluate((element) => {
+          const style = getComputedStyle(element);
+          return [style.outlineStyle, style.outlineWidth, style.outlineColor];
+        }),
+      )
+      .toEqual(['solid', '3px', 'rgb(255, 204, 0)']);
     await page.keyboard.type('123');
     await expect(input).toHaveValue('R$ 1,23');
   });

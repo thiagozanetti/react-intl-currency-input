@@ -71,9 +71,8 @@ describe('published package boundary', () => {
   }, 30_000);
 
   it('runs the installed-package integration verifier only when explicitly enabled', {
-    skip: process.env.PACKAGE_INTEGRATION === '1'
-      ? false
-      : 'set PACKAGE_INTEGRATION=1 to run temporary matrix installs',
+    skip:
+      process.env.PACKAGE_INTEGRATION === '1' ? false : 'set PACKAGE_INTEGRATION=1 to run temporary matrix installs',
   }, () => {
     execFileSync(process.execPath, [join(packageRoot, 'scripts/verify-package.mjs')], {
       cwd: packageRoot,
