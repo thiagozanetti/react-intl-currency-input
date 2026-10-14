@@ -115,13 +115,13 @@ For each batch: update one related group, run the cheap checks, inspect the diff
 
 ### Phase 5 — CI, audit, and release hardening
 
-- [ ] Keep pull requests and `main` validation on Node 24 with least-privilege permissions and concurrency cancellation.
-- [ ] Keep Dependency Review and audit reporting separate from the root package audit result.
-- [ ] Ensure the release workflow triggers only on `release: published`.
-- [ ] Validate the published release tag against `package.json` and reject prereleases before npm or Vercel side effects.
-- [ ] Build once and promote immutable npm/Vercel artifacts through the protected `Production` environment.
-- [ ] Preserve OIDC/Trusted Publishing, protected Vercel secrets, retry idempotency, failure issue tracking, and release evidence containing checksums, commit SHA, artifact IDs, and deployment URLs.
-- [ ] Treat promotion retries as actions on an existing published release only; never create or move tags during retry.
+- [x] Keep pull requests and `main` validation on Node 24 with least-privilege permissions and concurrency cancellation.
+- [x] Keep Dependency Review and audit reporting separate from the root package audit result.
+- [x] Ensure the release workflow triggers only on `release: published` for automatic promotion, with explicit published-release retry dispatch.
+- [x] Validate the published release tag against `package.json` and reject prereleases before npm or Vercel side effects.
+- [x] Build immutable npm/Vercel artifacts once per release run and promote them through the protected `Production` environment.
+- [x] Preserve OIDC/Trusted Publishing, protected Vercel secrets, retry idempotency, failure issue tracking, and release evidence containing checksums, commit SHA, artifact IDs, and deployment URLs.
+- [x] Treat promotion retries as actions on an existing published release only; never create or move tags during retry.
 
 **Exit criteria:** Workflow configuration checks pass, CI is green on the pushed commit, and release evidence requirements are testable before authorizing `1.0.0` publication.
 
@@ -172,11 +172,12 @@ Fixture install audits may report vulnerabilities inherited from the Next.js or 
 - Playwright browser binaries are installed locally; Chromium and Firefox pass, while WebKit remains CI-authoritative because the host cannot install its required legacy ICU, libffi, and AVIF libraries.
 - Generated application output now uses `scripts/clean.mjs`; cleanup, package checks, fixtures, unit tests, coverage, Chromium, and Firefox validation passed.
 - Biome now enforces type-only imports and rejects explicit `any`; the remaining exceptions are tracked for separate behavior-focused review.
+- Phase 5 workflow hardening is implemented locally: CI checks are ordered with expensive tests last, workflow contracts validate the release boundary, and npm/Vercel promotions verify immutable artifact integrity before side effects.
 
 ## Completion evidence
 
 - [ ] Exact command output is inspected and recorded for every required check.
 - [ ] The final diff is reviewed for behavior changes, generated files, and dependency lockfile correctness.
-- [ ] CI passes on the pushed commit.
+- [ ] CI passes on the pushed commit; local workflow/configuration checks pass, but this branch has not been pushed.
 - [ ] No tag was created, moved, recreated, or pushed by the agent.
 - [ ] A published GitHub Release exists before any npm or Vercel promotion is attempted.

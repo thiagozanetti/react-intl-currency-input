@@ -33,6 +33,7 @@ The stable release of the modern React currency input API.
 - Library output now uses tsdown 0.23.1 for ESM, CommonJS, and declaration artifacts; Vite remains responsible for the application build.
 - Generated application output now uses a portable Node cleanup script instead of shell-specific recursive removal.
 - Biome now enforces type-only imports and rejects explicit `any` in the checked source, test, script, and configuration files.
+- CI and release automation now use ordered Node 24 checks, least-privilege permissions, published-release validation, immutable artifact checksums, protected production environments, idempotent promotion retries, and release evidence.
 
 ### Removed
 

@@ -44,7 +44,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           release_json=$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${RELEASE_TAG}")
-          echo "$release_json" | jq -e '.draft == false and .prerelease == false'
+          echo "$release_json" | jq -e --arg tag "$RELEASE_TAG" '.tag_name == $tag and .draft == false and .prerelease == false and .published_at != null'
           release_commit=$(git rev-list -n1 "refs/tags/${RELEASE_TAG}^{commit}")
           echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           echo "release_commit=$release_commit" >> "$GITHUB_OUTPUT"
@@ -75,10 +75,10 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
-      - run: npm run test:unit -- --run
       - run: npm run verify:docs
       - run: npm run build:all
       - run: npm run verify:package
+      - run: npm run test:unit -- --run
       - name: Build immutable npm package artifact
         run: |
           mkdir -p release-artifacts/npm
@@ -86,15 +86,6 @@ jobs:
           sha256sum release-artifacts/npm/*.tgz > release-artifacts/npm.sha256
       - name: Build immutable Vercel artifact
         run: |
-          if [ ! -f vercel.json ]; then
-            cat > vercel.json <<'EOF'
-          {
-            "framework": "vite",
-            "buildCommand": "npm run build:app",
-            "outputDirectory": "dist/app"
-          }
-          EOF
-          fi
           npx vercel@latest pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
           npx vercel@latest build --prod --token="${{ secrets.VERCEL_TOKEN }}"
           tar -czf release-artifacts/vercel-output.tgz .vercel/output
@@ -139,11 +130,27 @@ jobs:
         with:
           name: release-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}
           path: release-artifacts
+      - name: Verify immutable npm artifact
+        run: |
+          sha256sum -c release-artifacts/npm.sha256
+          package_tarball=$(find release-artifacts/npm -name '*.tgz' -print -quit)
+          package_metadata=$(tar -xOf "$package_tarball" package/package.json)
+          node -e 'const metadata = JSON.parse(process.argv[1]); const expected = process.argv[2]; if (metadata.version !== expected) throw new Error(`Artifact version ${metadata.version} does not match ${expected}`)' "$package_metadata" "${{ needs.build.outputs.release_tag }}"
       - name: Publish immutable package with npm Trusted Publishing
         run: |
-          if npm view "$(node -p "require('./package.json').name")@$(node -p "require('./package.json').version")" version >/dev/null 2>&1; then
-            echo "Package version is already published; treating retry as idempotent."
+          package_name=$(node -p "require('./package.json').name")
+          package_version=$(node -p "require('./package.json').version")
+          package_tarball=$(find release-artifacts/npm -name '*.tgz' -print -quit)
+          package_integrity="sha512-$(openssl dgst -sha512 -binary "$package_tarball" | openssl base64 -A)"
+          if npm view "$package_name@$package_version" version >/dev/null 2>&1; then
+            published_integrity=$(npm view "$package_name@$package_version" dist.integrity)
+            if [ "$published_integrity" != "$package_integrity" ]; then
+              echo "Published package integrity does not match the immutable release artifact." >&2
+              exit 1
+            fi
+            echo "Package version and integrity are already published; treating retry as idempotent."
           else
+            npm ping >/dev/null
             npm publish release-artifacts/npm/*.tgz --provenance --access public
           fi
       - name: Record npm evidence
@@ -158,6 +165,8 @@ jobs:
 
   deploy-vercel:
     needs: build
+    outputs:
+      deployment_url: ${{ steps.deploy.outputs.deployment_url }}
     environment: Production
     permissions:
       contents: read
@@ -172,13 +181,19 @@ jobs:
           node-version: 24.x
       - uses: actions/download-artifact@v4
         with:
-          name: vercel-release-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}
+          name: release-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}
           path: release-artifacts
+      - uses: actions/download-artifact@v4
+        with:
+          name: vercel-release-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}
+          path: vercel-artifact
+      - name: Verify immutable Vercel artifact
+        run: sha256sum -c release-artifacts/vercel.sha256
       - name: Promote immutable Vercel artifact
         id: deploy
         run: |
           mkdir -p .vercel
-          tar -xzf release-artifacts/vercel-output.tgz
+          tar -xzf vercel-artifact/vercel-output.tgz
           deployment_url=$(npx vercel@latest deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN }}")
           echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
       - name: Record deployment evidence
@@ -200,6 +215,35 @@ jobs:
           name: deployment-evidence-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}
           path: release-evidence.json
           if-no-files-found: ignore
+
+  release-evidence:
+    if: ${{ always() && needs.validate.result == 'success' && needs.build.result == 'success' }}
+    needs: [validate, build, publish-npm, deploy-vercel]
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}
+          path: release-artifacts
+      - name: Write complete release evidence
+        env:
+          TAG: ${{ needs.build.outputs.release_tag }}
+          COMMIT: ${{ needs.build.outputs.release_commit }}
+          NPM_ARTIFACT_ID: ${{ needs.build.outputs.release_artifact_id }}
+          VERCEL_ARTIFACT_ID: ${{ needs.build.outputs.vercel_artifact_id }}
+          DEPLOYMENT_URL: ${{ needs.deploy-vercel.outputs.deployment_url }}
+        run: |
+          cat > release-evidence.json <<EOF
+          {"tag":"$TAG","commit":"$COMMIT","npm_artifact_id":"$NPM_ARTIFACT_ID","vercel_artifact_id":"$VERCEL_ARTIFACT_ID","npm_checksum":"$(cut -d ' ' -f1 release-artifacts/npm.sha256)","vercel_checksum":"$(cut -d ' ' -f1 release-artifacts/vercel.sha256)","deployment_url":"$DEPLOYMENT_URL","npm_provenance":"npm publish --provenance"}
+          EOF
+          cat release-evidence.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-evidence-${{ needs.build.outputs.release_tag }}-${{ needs.build.outputs.release_commit }}
+          path: release-evidence.json
+          if-no-files-found: error
 
   release-failure:
     if: ${{ always() && (needs.validate.result == 'failure' || needs.build.result == 'failure' || needs.publish-npm.result == 'failure' || needs.deploy-vercel.result == 'failure') }}

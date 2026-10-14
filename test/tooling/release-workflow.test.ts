@@ -11,6 +11,7 @@ function read(path: string) {
 describe('release automation contract', () => {
   it('runs required verification on pull requests and main with least privilege', () => {
     const workflow = read('.github/workflows/ci.yml');
+    const verifyJob = workflow.slice(workflow.indexOf('  verify:'), workflow.indexOf('  browser:'));
 
     expect(workflow).toContain('pull_request:');
     expect(workflow).toMatch(/push:\s*\n\s*branches:\s*\[\s*main\s*\]/);
@@ -33,6 +34,21 @@ describe('release automation contract', () => {
     for (const project of ['chromium', 'firefox', 'webkit']) {
       expect(workflow).toContain(`--project=${project}`);
     }
+
+    const unitTestPosition = verifyJob.indexOf('npm run test:unit -- --run');
+    for (const command of [
+      'npm run typecheck',
+      'npm run lint',
+      'npm run verify:docs',
+      'npm run build:all',
+      'npm run pack:check',
+      'npm run verify:package',
+      'npm run verify:fixtures',
+    ]) {
+      expect(verifyJob.indexOf(command)).toBeGreaterThanOrEqual(0);
+      expect(verifyJob.indexOf(command)).toBeLessThan(unitTestPosition);
+    }
+    expect(verifyJob.indexOf('npm run coverage')).toBeGreaterThan(unitTestPosition);
   });
 
   it('only promotes a published bare stable release from one immutable build', () => {
@@ -44,6 +60,8 @@ describe('release automation contract', () => {
     expect(workflow).toContain('releases/tags/');
     expect(workflow).toContain('draft == false');
     expect(workflow).toContain('prerelease == false');
+    expect(workflow).toContain('published_at != null');
+    expect(workflow).toContain('.tag_name == $tag');
     expect(workflow).toContain('scripts/validate-release.mjs');
     expect(workflow).toContain('github.event.release.tag_name');
     expect(workflow).toContain('npm publish');
@@ -52,8 +70,6 @@ describe('release automation contract', () => {
     expect(workflow).toContain('id-token: write');
     expect(workflow).toContain('actions/upload-artifact@v4');
     expect(workflow).toContain('actions/download-artifact@v4');
-    expect(workflow).toContain('buildCommand');
-    expect(workflow).toContain('outputDirectory');
     expect(workflow).toContain('vercel@latest pull --yes --environment=production');
     expect(workflow).toContain('vercel@latest build --prod');
     expect(workflow).toContain('gh issue list --repo "$REPOSITORY"');
@@ -63,6 +79,12 @@ describe('release automation contract', () => {
     expect(workflow).toContain('GITHUB_STEP_SUMMARY');
     expect(workflow).toContain('release_commit');
     expect(workflow).toContain('sha256sum');
+    expect(workflow).toContain('sha256sum -c');
+    expect(workflow).toContain('dist.integrity');
+    expect(workflow).toContain('node-version: 24.x');
+    expect(workflow).toContain('deployment_url');
+    expect(workflow).toContain('artifact_id');
+    expect(workflow).not.toContain('git tag');
     expect(workflow).toContain('gh issue');
     expect(workflow).toContain('if: always()');
 
