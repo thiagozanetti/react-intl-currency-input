@@ -19,8 +19,11 @@ main {
 }
 
 .build-info {
-  max-width: 100%;
-  margin: 0 0 0.75rem;
+  position: absolute;
+  top: 0.35rem;
+  right: 0.75rem;
+  max-width: calc(100% - 1.5rem);
+  margin: 0;
   overflow: hidden;
   color: #aeb4aa;
   font-size: 0.625rem;
@@ -32,6 +35,7 @@ main {
 
 section {
   box-sizing: border-box;
+  position: relative;
   background-color: #242829;
   padding: 10px 50px;
   min-height: 33rem;
