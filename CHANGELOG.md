@@ -34,6 +34,7 @@ The stable release of the modern React currency input API.
 - Generated application output now uses a portable Node cleanup script instead of shell-specific recursive removal.
 - Biome now enforces type-only imports and rejects explicit `any` in the checked source, test, script, and configuration files.
 - CI and release automation now use ordered Node 24 checks, least-privilege permissions, published-release validation, immutable artifact checksums, protected production environments, idempotent promotion retries, and release evidence.
+- The example deployment now displays its package version, commit identity, and build timestamp in a compact status line.
 
 ### Removed
 

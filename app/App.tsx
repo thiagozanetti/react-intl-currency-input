@@ -8,6 +8,9 @@ const defaultValue = 0.0;
 const maxValue = 999999999.99;
 const regex = /"([\w]+)":/g;
 const subst = '$1:';
+const buildVersion = typeof __BUILD_VERSION__ === 'undefined' ? '1.0.0' : __BUILD_VERSION__;
+const buildCommit = typeof __BUILD_COMMIT__ === 'undefined' ? 'local' : __BUILD_COMMIT__;
+const buildTimestamp = typeof __BUILD_TIMESTAMP__ === 'undefined' ? new Date().toISOString() : __BUILD_TIMESTAMP__;
 
 function BrlCurrencyInput() {
   const fixtureParams = new URLSearchParams(window.location.search);
@@ -108,8 +111,14 @@ function BrlCurrencyInput() {
 }
 
 function App() {
+  const displayedBuildCommit = buildCommit === 'local' ? 'local' : buildCommit.slice(0, 7);
+
   return (
     <main>
+      <p className='build-info' data-testid='build-info'>
+        Version {buildVersion} · commit {displayedBuildCommit} · built{' '}
+        <time dateTime={buildTimestamp}>{buildTimestamp}</time>
+      </p>
       <section>
         <h1>react-intl-currency-input example</h1>
         <p>Using this configuration:</p>
