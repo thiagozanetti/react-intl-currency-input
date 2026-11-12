@@ -4,7 +4,9 @@ All notable changes are documented here. This file follows [Keep a Changelog](ht
 
 ## [Unreleased]
 
-There are no unreleased changes.
+### Changed
+
+- Use the Node 24 major line in `.node-version` and refresh development tooling dependencies.
 
 ## [1.0.0] - 2026-10-09
 
