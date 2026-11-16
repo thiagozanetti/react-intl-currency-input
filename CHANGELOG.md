@@ -6,7 +6,7 @@ All notable changes are documented here. This file follows [Keep a Changelog](ht
 
 ### Changed
 
-- Use the Node 24 major line in `.node-version` and refresh development tooling dependencies.
+- Use the Node 24 major line in `.node-version` and refresh development tooling, including Biome 2.6.8, jsdom 31, Vite 8.3.8, and `@testing-library/user-event` 14.6.10.
 
 ## [1.0.0] - 2026-10-09
 

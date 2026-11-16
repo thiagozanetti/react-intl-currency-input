@@ -67,7 +67,7 @@ describe('modern tooling configuration', () => {
   });
 
   it('keeps jsdom on the current supported browser-emulation major', () => {
-    expect(packageJson.devDependencies.jsdom).toMatch(/^\^?30\./);
+    expect(packageJson.devDependencies.jsdom).toMatch(/^\^?31\./);
   });
 
   it('keeps Vite and the React plugin on their compatible supported majors', () => {
@@ -110,7 +110,7 @@ describe('modern tooling configuration', () => {
     expect(workflow).toContain('actions/download-artifact@v4');
     expect(packageJson.scripts.lint).toContain('biome check');
     expect(biomeConfig).toContain('"organizeImports"');
-    expect(biomeConfig).toContain('"recommended": true');
+    expect(biomeConfig).toContain('"preset": "recommended"');
     expect(biomeConfig).toContain('"useImportType": "error"');
     expect(biomeConfig).toContain('"noExplicitAny": "error"');
     expect(packageJson.devDependencies).toEqual(
