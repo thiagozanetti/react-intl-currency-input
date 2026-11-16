@@ -33,6 +33,23 @@ const brlConfig: IntlFormatterConfig = {
   },
 };
 
+const CustomInput = forwardRef<HTMLInputElement, React.ComponentProps<'input'>>((props, ref) => (
+  <input {...props} ref={ref} data-custom='true' />
+));
+CustomInput.displayName = 'CustomInput';
+
+function ControlledValueHarness() {
+  const [value, setValue] = useState(1.23);
+  return (
+    <>
+      <button type='button' onClick={() => setValue(45.67)}>
+        update
+      </button>
+      <IntlCurrencyInput currency='USD' config={usdConfig} value={value} />
+    </>
+  );
+}
+
 describe('legacy IntlCurrencyInput initialization and numeric behavior', () => {
   it('renders the omitted value as zero with the default USD format', () => {
     render(<IntlCurrencyInput />);
@@ -181,10 +198,6 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
   });
 
   it('renders a forwarded custom input component', () => {
-    const CustomInput = forwardRef<HTMLInputElement, React.ComponentProps<'input'>>((props, ref) => (
-      <input {...props} ref={ref} data-custom='true' />
-    ));
-    CustomInput.displayName = 'CustomInput';
     render(<IntlCurrencyInput component={CustomInput} currency='USD' config={usdConfig} />);
 
     expect(screen.getByRole('textbox')).toHaveAttribute('data-custom', 'true');
@@ -211,19 +224,7 @@ describe('legacy IntlCurrencyInput interaction behavior', () => {
   });
 
   it('reflects rapid controlled prop updates in the latest formatted display', () => {
-    function Harness() {
-      const [value, setValue] = useState(1.23);
-      return (
-        <>
-          <button type='button' onClick={() => setValue(45.67)}>
-            update
-          </button>
-          <IntlCurrencyInput currency='USD' config={usdConfig} value={value} />
-        </>
-      );
-    }
-
-    render(<Harness />);
+    render(<ControlledValueHarness />);
     fireEvent.click(screen.getByRole('button', { name: 'update' }));
 
     expect(screen.getByRole('textbox')).toHaveValue('$45.67');

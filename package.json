@@ -39,7 +39,7 @@
     "react-dom": ">=18.2.0 <20"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.15",
+    "@biomejs/biome": "2.6.8",
     "@playwright/test": "^1.64.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "7.0.1",
@@ -50,7 +50,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "@vitest/coverage-v8": "^5.0.4",
-    "jsdom": "^30.1.2",
+    "jsdom": "^31.0.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "tsdown": "^0.23.1",
